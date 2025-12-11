@@ -14,15 +14,15 @@ export function NewScheduleDialog({ open, onOpenChange }: NewScheduleDialogProps
   const [title, setTitle] = useState("")
   const [startTime, setStartTime] = useState("09:00")
   const [duration, setDuration] = useState(60) // in minutes
-  const [color, setColor] = useState("blue")
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
 
   const templates = [
-    { label: "회의", color: "blue" },
-    { label: "집중 작업", color: "green" },
-    { label: "학습", color: "purple" },
-    { label: "운동", color: "red" },
-    { label: "휴식", color: "yellow" },
-    { label: "식사", color: "orange" },
+    { label: "회의", color: "#7986CB" }, // blue
+    { label: "집중 작업", color: "#4DB6AC" }, // green
+    { label: "학습", color: "#9575CD" }, // purple
+    { label: "운동", color: "#E57373" }, // red
+    { label: "휴식", color: "#FFD54F" }, // yellow
+    { label: "식사", color: "#FF8A65" }, // orange
   ]
 
   const durations = [
@@ -36,153 +36,114 @@ export function NewScheduleDialog({ open, onOpenChange }: NewScheduleDialogProps
     { label: "4시간", value: 240 },
   ]
 
-  const colors = [
-    { value: "blue", label: "파란색", class: "bg-[#7AA2FF]" },
-    { value: "orange", label: "주황색", class: "bg-[#FF9F66]" },
-    { value: "green", label: "초록색", class: "bg-[#66D9A8]" },
-    { value: "purple", label: "보라색", class: "bg-[#B794F6]" },
-    { value: "pink", label: "분홍색", class: "bg-[#F472B6]" },
-    { value: "red", label: "빨간색", class: "bg-[#FF6B6B]" },
-    { value: "teal", label: "청록색", class: "bg-[#4FD1C5]" },
-    { value: "yellow", label: "노란색", class: "bg-[#FFD93D]" },
-  ]
-
-  const getColorClass = (colorValue: string) => {
-    return colors.find((c) => c.value === colorValue)?.class || "bg-brand"
-  }
-
-  const getColorDot = (colorValue: string) => {
-    const templateColors: Record<string, string> = {
-      회의: "bg-[#7AA2FF]",
-      "집중 작업": "bg-[#66D9A8]",
-      학습: "bg-[#B794F6]",
-      운동: "bg-[#FF6B6B]",
-      휴식: "bg-[#FFD93D]",
-      식사: "bg-[#FF9F66]",
-    }
-    return templateColors[colorValue] || "bg-brand"
-  }
-
-  const calculateEndTime = () => {
-    const [hours, minutes] = startTime.split(":").map(Number)
-    const totalMinutes = hours * 60 + minutes + duration
-    const endHours = Math.floor(totalMinutes / 60) % 24
-    const endMinutes = totalMinutes % 60
-    return `${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`
-  }
-
-  const formatDuration = () => {
-    const hours = Math.floor(duration / 60)
-    const mins = duration % 60
-    if (hours > 0 && mins > 0) return `${hours}h ${mins}m`
-    if (hours > 0) return `${hours}h 0m`
-    return `${mins}m`
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(":").map(Number)
+    const period = hours >= 12 ? "오후" : "오전"
+    const displayHour = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours
+    return `${period} ${displayHour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
   }
 
   const handleTemplateClick = (template: (typeof templates)[0]) => {
     setTitle(template.label)
-    setColor(template.color)
+    setSelectedTemplate(template.label)
+  }
+
+  const handleSubmit = () => {
+    // TODO: 실제로 일정을 저장하는 로직
+    console.log("새 블록 생성:", { title, startTime, duration })
+    onOpenChange(false)
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card sm:max-w-[400px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white sm:max-w-[560px] max-h-[90vh] overflow-y-auto rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] p-8">
         <DialogHeader>
-          <DialogTitle className="text-text">새 블록 만들기</DialogTitle>
+          <DialogTitle className="text-[#1A1B1E] text-lg font-semibold">새 블록 만들기</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
+          {/* 빠른 템플릿 */}
           <div className="space-y-3">
-            <Label className="text-text-secondary text-sm">빠른 템플릿</Label>
-            <div className="grid grid-cols-2 gap-2">
+            <Label className="text-[#343A40] text-sm font-medium">빠른 템플릿</Label>
+            <div className="grid grid-cols-3 gap-2">
               {templates.map((template) => (
                 <button
                   key={template.label}
                   onClick={() => handleTemplateClick(template)}
-                  className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background hover:bg-background-strong transition-colors text-left"
+                  className="flex items-center gap-2 px-4 py-3 rounded-lg bg-[#F1F3F5] hover:bg-[#E9ECEF] transition-colors text-left"
                 >
-                  <div className={`w-2 h-2 rounded-full ${getColorDot(template.label)}`} />
-                  <span className="text-text text-sm">{template.label}</span>
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: template.color }} />
+                  <span className="text-[#343A40] text-sm">{template.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
+          {/* 제목 */}
           <div className="space-y-2">
-            <Label className="text-text-secondary text-sm">제목</Label>
+            <Label className="text-[#343A40] text-sm font-medium">제목</Label>
             <Input
-              placeholder="여러 제목을 입력하세요"
+              placeholder="작업 제목을 입력하세요"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-background text-text border-border"
+              className="bg-white text-[#343A40] border-[#E9ECEF] h-12 rounded-lg focus:border-[#4DB6AC] focus:ring-[#4DB6AC] focus:ring-[3px] focus:ring-opacity-10"
             />
           </div>
 
+          {/* 시작 시간 */}
           <div className="space-y-2">
-            <Label className="text-text-secondary text-sm">시작 시간</Label>
+            <Label className="text-[#343A40] text-sm font-medium">시작 시간</Label>
             <div className="relative">
-              <Input
+              <input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="bg-background text-text border-border pl-10"
+                className="bg-white text-[#343A40] border border-[#E9ECEF] h-12 w-full rounded-lg pl-4 pr-10 focus:border-[#4DB6AC] focus:ring-[#4DB6AC] focus:ring-[3px] focus:ring-opacity-10 outline-none"
+                style={{ color: "transparent" }}
               />
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#343A40] text-sm">
+                {formatTime(startTime)}
+              </div>
+              <Clock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#868E96] pointer-events-none" />
             </div>
           </div>
 
+          {/* 소요 시간 */}
           <div className="space-y-3">
-            <Label className="text-text-secondary text-sm">소요 시간</Label>
+            <Label className="text-[#343A40] text-sm font-medium">소요 시간</Label>
             <div className="grid grid-cols-4 gap-2">
               {durations.map((d) => (
                 <button
                   key={d.value}
                   onClick={() => setDuration(d.value)}
-                  className={`px-3 py-2 rounded-lg text-sm transition-colors ${
-                    duration === d.value ? "bg-brand text-white" : "bg-background text-text hover:bg-background-strong"
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    duration === d.value
+                      ? "bg-[#4DB6AC] text-white shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
+                      : "bg-[#F1F3F5] text-[#343A40] hover:bg-[#E9ECEF]"
                   }`}
                 >
                   {d.label}
                 </button>
               ))}
             </div>
-            <button className="text-brand text-sm hover:underline">직접 입력</button>
+            <button className="text-[#4DB6AC] text-sm hover:underline">직접 입력</button>
           </div>
+        </div>
 
-          <div className="space-y-3">
-            <Label className="text-text-secondary text-sm">색상</Label>
-            <div className="grid grid-cols-4 gap-2">
-              {colors.map((c) => (
-                <button
-                  key={c.value}
-                  onClick={() => setColor(c.value)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    color === c.value ? "bg-background-strong" : "bg-background hover:bg-background-strong"
-                  }`}
-                >
-                  <div className={`w-3 h-3 rounded-full ${c.class}`} />
-                  <span className="text-text text-sm">{c.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-text-secondary text-sm">미리보기</Label>
-            <div
-              className={`rounded-lg p-4 border-l-4 bg-background ${getColorClass(color).replace("bg-", "border-")}`}
-            >
-              <div className="flex items-start gap-2">
-                <Clock className="w-4 h-4 text-text-secondary mt-0.5" />
-                <div>
-                  <div className="text-text font-medium">{title || "작업 제목"}</div>
-                  <div className="text-text-secondary text-sm mt-1">
-                    {startTime} - {calculateEndTime()} • {formatDuration()}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* 하단 버튼 */}
+        <div className="flex justify-end gap-2 pt-4 border-t border-[#E9ECEF]">
+          <button
+            onClick={() => onOpenChange(false)}
+            className="px-4 py-2 text-sm text-[#868E96] hover:text-[#343A40] transition-colors"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="px-6 py-2 bg-[#4DB6AC] hover:bg-[#3AA996] text-white rounded-lg text-sm font-semibold shadow-[0_2px_6px_rgba(77,182,172,0.2)] transition-colors"
+          >
+            만들기
+          </button>
         </div>
       </DialogContent>
     </Dialog>

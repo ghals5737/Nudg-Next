@@ -1,0 +1,175 @@
+{
+    "designSystem": {
+      "meta": {
+        "appName": "Nudg",
+        "styleArchetype": "Clean, Soft-Focus, Pastel-Utility",
+        "baseFontSize": "16px",
+        "fontFamily": "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif"
+      },
+      "colorPalette": {
+        "primary": {
+          "brandTeal": "#4DB6AC",
+          "brandTealDark": "#3AA996",
+          "brandTealLight": "#E0F2F1",
+          "interactionFocus": "#80CBC4"
+        },
+        "surfaces": {
+          "appBackground": "#F5F6F8",
+          "sidebarBackground": "#F7F8FA",
+          "cardSurface": "#FFFFFF",
+          "modalSurface": "#FFFFFF",
+          "inputBackground": "#FFFFFF",
+          "hoverSurface": "#F8F9FA"
+        },
+        "typography": {
+          "heading": "#1A1B1E",
+          "bodyPrimary": "#343A40",
+          "bodySecondary": "#868E96",
+          "placeholder": "#ADB5BD",
+          "inverse": "#FFFFFF"
+        },
+        "status": {
+          "success": "#4DB6AC",
+          "warning": "#FFB74D",
+          "danger": "#E57373",
+          "info": "#64B5F6",
+          "neutral": "#90A4AE"
+        },
+        "functionalTags": {
+          "blue": "#7986CB",
+          "green": "#4DB6AC",
+          "yellow": "#FFD54F",
+          "purple": "#9575CD",
+          "pink": "#F06292",
+          "orange": "#FF8A65",
+          "cyan": "#4DD0E1",
+          "red": "#E57373"
+        }
+      },
+      "componentStyles": {
+        "layoutContainers": {
+          "sidebar": {
+            "width": "260px",
+            "backgroundColor": "#F7F8FA",
+            "borderRight": "none",
+            "padding": "24px 16px"
+          },
+          "mainContent": {
+            "backgroundColor": "#F5F6F8",
+            "padding": "32px 40px"
+          },
+          "cards": {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": "16px",
+            "boxShadow": "0 2px 12px rgba(0, 0, 0, 0.03)",
+            "border": "none",
+            "padding": "24px"
+          }
+        },
+        "navigation": {
+          "sidebarItem": {
+            "height": "48px",
+            "borderRadius": "12px",
+            "fontWeight": "500",
+            "color": "#495057",
+            "iconSize": "20px",
+            "gap": "12px",
+            "states": {
+              "default": {
+                "background": "transparent",
+                "color": "#495057"
+              },
+              "active": {
+                "background": "#4DB6AC",
+                "color": "#FFFFFF",
+                "boxShadow": "0 4px 12px rgba(77, 182, 172, 0.25)"
+              },
+              "hover": {
+                "background": "#E9ECEF",
+                "color": "#212529"
+              }
+            }
+          }
+        },
+        "inputs": {
+          "textFields": {
+            "height": "48px",
+            "borderRadius": "8px",
+            "border": "1px solid #E9ECEF",
+            "backgroundColor": "#FFFFFF",
+            "padding": "0 16px",
+            "fontSize": "15px",
+            "focusState": {
+              "borderColor": "#4DB6AC",
+              "boxShadow": "0 0 0 3px rgba(77, 182, 172, 0.1)"
+            }
+          },
+          "toggles": {
+            "trackHeight": "24px",
+            "trackWidth": "44px",
+            "thumbSize": "20px",
+            "checkedColor": "#4DB6AC",
+            "uncheckedColor": "#DEE2E6"
+          },
+          "selectionChips": {
+            "borderRadius": "8px",
+            "border": "1px solid #E9ECEF",
+            "background": "#FFFFFF",
+            "padding": "8px 16px",
+            "activeState": {
+              "background": "#4DB6AC",
+              "color": "#FFFFFF",
+              "border": "1px solid #4DB6AC"
+            }
+          }
+        },
+        "buttons": {
+          "primary": {
+            "background": "#4DB6AC",
+            "color": "#FFFFFF",
+            "borderRadius": "8px",
+            "height": "44px",
+            "padding": "0 24px",
+            "fontWeight": "600",
+            "boxShadow": "0 2px 6px rgba(77, 182, 172, 0.2)"
+          },
+          "secondary": {
+            "background": "#F1F3F5",
+            "color": "#495057",
+            "borderRadius": "8px",
+            "padding": "8px 16px"
+          },
+          "actionIcon": {
+            "background": "#4DB6AC",
+            "color": "#FFFFFF",
+            "borderRadius": "8px",
+            "width": "36px",
+            "height": "36px"
+          }
+        },
+        "feedbackElements": {
+          "progressBars": {
+            "trackColor": "#F1F3F5",
+            "fillColor": "#4DB6AC", 
+            "height": "8px",
+            "borderRadius": "4px"
+          },
+          "timelineItems": {
+            "lineColor": "#E9ECEF",
+            "dotSize": "10px",
+            "connectorWidth": "2px"
+          }
+        },
+        "modals": {
+          "overlay": "rgba(0, 0, 0, 0.4)",
+          "container": {
+            "borderRadius": "20px",
+            "background": "#FFFFFF",
+            "boxShadow": "0 20px 40px rgba(0, 0, 0, 0.1)",
+            "padding": "32px",
+            "maxWidth": "560px"
+          }
+        }
+      }
+    }
+  }

@@ -2,161 +2,129 @@
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { MobileNav } from "@/components/mobile-nav"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
-import { Bell, Moon, Globe, Clock, Trash2, Download, User } from "lucide-react"
-import { useState } from "react"
+import { Globe, User, Bell, Shield, Palette, ChevronRight, Pencil } from "lucide-react"
 
 export default function SettingsPage() {
-  const [notifications, setNotifications] = useState(true)
-  const [darkMode, setDarkMode] = useState(true)
-  const [autoSave, setAutoSave] = useState(true)
-
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-[#F5F6F8]">
       <AppSidebar />
 
-      <main className="flex-1 md:ml-[200px]">
-        <div className="mx-auto max-w-5xl p-6 pb-24 md:pb-6">
+      <main className="flex-1 ml-[260px]">
+        <div className="px-10 py-8 pb-24 md:pb-8">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="mb-1 text-2xl font-bold text-text">설정</h1>
-            <p className="text-sm text-text-sub">앱 설정을 관리하세요</p>
+            <h1 className="mb-1 text-2xl font-bold text-[#1A1B1E]">설정</h1>
+            <p className="text-sm text-[#868E96]">앱 환경을 개인화하고 계정을 관리하세요</p>
           </div>
 
-          {/* Profile Section */}
-          <Card className="mb-6 bg-card p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <User className="h-5 w-5 text-text" />
-              <h2 className="text-lg font-semibold text-text">프로필</h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand text-2xl font-bold text-white">
-                사
+          {/* User Account Information Card */}
+          <div className="mb-8 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#4DB6AC] text-3xl font-bold text-white">
+                  김
+                </div>
+                <div>
+                  <h2 className="mb-1 text-xl font-semibold text-[#343A40]">김민수</h2>
+                  <p className="mb-3 text-sm text-[#868E96]">minsu.kim@example.com</p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm text-[#868E96]">
+                      <Globe className="h-4 w-4" />
+                      <span>Asia/Seoul</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-[#868E96]">
+                      <Globe className="h-4 w-4" />
+                      <span>한국어</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-text">사용자</h3>
-                <p className="text-sm text-muted-foreground">user@example.com</p>
-              </div>
-              <Button variant="outline">프로필 수정</Button>
+              <button className="flex items-center gap-1 px-3 py-2 text-sm text-[#868E96] hover:text-[#343A40] hover:bg-[#F8F9FA] rounded-lg transition-colors">
+                <Pencil className="h-4 w-4" />
+                편집
+              </button>
             </div>
-          </Card>
+          </div>
 
-          {/* Notifications */}
-          <Card className="mb-6 bg-card p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <Bell className="h-5 w-5 text-text" />
-              <h2 className="text-lg font-semibold text-text">알림</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">푸시 알림</h3>
-                  <p className="text-sm text-muted-foreground">일정과 루틴 알림을 받습니다</p>
+          {/* Account Section */}
+          <div className="mb-8">
+            <h2 className="mb-4 text-lg font-semibold text-[#1A1B1E]">계정</h2>
+            <div className="space-y-2">
+              {/* Profile */}
+              <button className="w-full flex items-center justify-between bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-4 hover:shadow-md transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#F1F3F5]">
+                    <User className="h-5 w-5 text-[#868E96]" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium text-[#343A40]">프로필</h3>
+                    <p className="text-sm text-[#868E96]">이름, 이메일, 프로필 사진 관리</p>
+                  </div>
                 </div>
-                <Switch checked={notifications} onCheckedChange={setNotifications} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">이메일 알림</h3>
-                  <p className="text-sm text-muted-foreground">주간 리포트를 이메일로 받습니다</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-[#868E96]">김민수</span>
+                  <ChevronRight className="h-5 w-5 text-[#868E96]" />
                 </div>
-                <Switch checked={false} onCheckedChange={() => {}} />
-              </div>
-            </div>
-          </Card>
+              </button>
 
-          {/* Appearance */}
-          <Card className="mb-6 bg-card p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <Moon className="h-5 w-5 text-text" />
-              <h2 className="text-lg font-semibold text-text">화면</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">다크 모드</h3>
-                  <p className="text-sm text-muted-foreground">어두운 테마를 사용합니다</p>
+              {/* Notifications */}
+              <button className="w-full flex items-center justify-between bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-4 hover:shadow-md transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#F1F3F5]">
+                    <Bell className="h-5 w-5 text-[#868E96]" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium text-[#343A40]">알림</h3>
+                    <p className="text-sm text-[#868E96]">푸시 알림, 소리, 진동 설정</p>
+                  </div>
                 </div>
-                <Switch checked={darkMode} onCheckedChange={setDarkMode} />
-              </div>
-            </div>
-          </Card>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-[#868E96]">6개 활성</span>
+                  <ChevronRight className="h-5 w-5 text-[#868E96]" />
+                </div>
+              </button>
 
-          {/* Language & Region */}
-          <Card className="mb-6 bg-card p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <Globe className="h-5 w-5 text-text" />
-              <h2 className="text-lg font-semibold text-text">언어 및 지역</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">언어</h3>
-                  <p className="text-sm text-muted-foreground">한국어</p>
+              {/* Personal Information */}
+              <button className="w-full flex items-center justify-between bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-4 hover:shadow-md transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#F1F3F5]">
+                    <Shield className="h-5 w-5 text-[#868E96]" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium text-[#343A40]">개인정보</h3>
+                    <p className="text-sm text-[#868E96]">데이터 보호 및 개인정보 설정</p>
+                  </div>
                 </div>
-                <Button variant="outline" size="sm">
-                  변경
-                </Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">시간대</h3>
-                  <p className="text-sm text-muted-foreground">서울 (GMT+9)</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-[#868E96]">안전</span>
+                  <ChevronRight className="h-5 w-5 text-[#868E96]" />
                 </div>
-                <Button variant="outline" size="sm">
-                  변경
-                </Button>
-              </div>
+              </button>
             </div>
-          </Card>
+          </div>
 
-          {/* Data & Privacy */}
-          <Card className="mb-6 bg-card p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-text" />
-              <h2 className="text-lg font-semibold text-text">데이터 및 개인정보</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">자동 저장</h3>
-                  <p className="text-sm text-muted-foreground">변경사항을 자동으로 저장합니다</p>
+          {/* App Settings Section */}
+          <div>
+            <h2 className="mb-4 text-lg font-semibold text-[#1A1B1E]">앱 설정</h2>
+            <div className="space-y-2">
+              {/* Theme */}
+              <button className="w-full flex items-center justify-between bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-4 hover:shadow-md transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#F1F3F5]">
+                    <Palette className="h-5 w-5 text-[#868E96]" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium text-[#343A40]">테마</h3>
+                    <p className="text-sm text-[#868E96]">다크 모드, 색상, 글꼴 크기</p>
+                  </div>
                 </div>
-                <Switch checked={autoSave} onCheckedChange={setAutoSave} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">데이터 내보내기</h3>
-                  <p className="text-sm text-muted-foreground">모든 데이터를 JSON 파일로 다운로드</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-[#868E96]">라이트</span>
+                  <ChevronRight className="h-5 w-5 text-[#868E96]" />
                 </div>
-                <Button variant="outline" size="sm">
-                  <Download className="mr-2 h-4 w-4" />
-                  내보내기
-                </Button>
-              </div>
+              </button>
             </div>
-          </Card>
-
-          {/* Danger Zone */}
-          <Card className="border-danger/50 bg-card p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <Trash2 className="h-5 w-5 text-danger" />
-              <h2 className="text-lg font-semibold text-danger">위험 구역</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-text">모든 데이터 삭제</h3>
-                  <p className="text-sm text-muted-foreground">모든 기록과 설정이 영구적으로 삭제됩니다</p>
-                </div>
-                <Button variant="destructive" size="sm">
-                  삭제
-                </Button>
-              </div>
-            </div>
-          </Card>
+          </div>
         </div>
       </main>
 
