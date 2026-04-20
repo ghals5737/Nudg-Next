@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Goal - Serene Focus</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e1eae8",
+                        "tertiary-dim": "#28596d",
+                        "outline": "#727d7b",
+                        "on-tertiary-fixed": "#0a4356",
+                        "on-primary-container": "#00534d",
+                        "surface-container-highest": "#d9e5e2",
+                        "secondary-dim": "#3f5855",
+                        "surface-tint": "#006b64",
+                        "surface-dim": "#d1dcda",
+                        "surface-bright": "#f6faf8",
+                        "on-error-container": "#6e0a12",
+                        "on-surface": "#2a3433",
+                        "tertiary-fixed": "#b7e7ff",
+                        "secondary-fixed": "#cce8e4",
+                        "on-secondary-container": "#3d5653",
+                        "surface-container-low": "#eef5f3",
+                        "tertiary-container": "#b7e7ff",
+                        "secondary-fixed-dim": "#bedad6",
+                        "inverse-primary": "#7fe6db",
+                        "primary-dim": "#005e57",
+                        "on-tertiary-container": "#24566a",
+                        "surface": "#f6faf8",
+                        "primary": "#006b64",
+                        "tertiary-fixed-dim": "#a9d8f0",
+                        "surface-variant": "#d9e5e2",
+                        "tertiary": "#356579",
+                        "inverse-on-surface": "#999e9c",
+                        "error": "#a83836",
+                        "on-primary": "#e2fffa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#f3faff",
+                        "secondary": "#4a6461",
+                        "outline-variant": "#a9b4b2",
+                        "error-container": "#fa746f",
+                        "inverse-surface": "#0a0f0e",
+                        "on-background": "#2a3433",
+                        "background": "#f6faf8",
+                        "on-tertiary-fixed-variant": "#2f5f74",
+                        "primary-fixed-dim": "#71d7cd",
+                        "on-surface-variant": "#56615f",
+                        "on-secondary-fixed": "#2b4441",
+                        "surface-container": "#e7f0ed",
+                        "on-primary-fixed-variant": "#005d57",
+                        "secondary-container": "#cce8e4",
+                        "on-secondary-fixed-variant": "#47605d",
+                        "primary-fixed": "#7fe6db",
+                        "on-error": "#fff7f6",
+                        "primary-container": "#7fe6db",
+                        "on-primary-fixed": "#003e39",
+                        "error-dim": "#67040d",
+                        "on-secondary": "#e2fffa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-background min-h-screen font-body text-on-background flex items-center justify-center p-4 antialiased">
+<!-- Modal Backdrop Overlay (Ambient, no harsh dimming) -->
+<div aria-hidden="true" class="fixed inset-0 bg-surface-variant/40 backdrop-blur-md z-40"></div>
+<!-- Modal Container -->
+<div class="relative z-50 w-full max-w-2xl bg-surface-container-lowest rounded-[3rem] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] overflow-hidden flex flex-col max-h-[921px]">
+<!-- Header Section: Encouraging & Soft -->
+<div class="px-8 pt-10 pb-6 bg-surface-container-low/50">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-headline font-bold text-sm tracking-widest text-primary-dim uppercase">New Goal</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors p-2 rounded-full hover:bg-surface-container-high/50">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Big Goal Input -->
+<div class="relative group mt-6">
+<input aria-label="Main Goal Title" class="w-full bg-transparent border-none p-0 text-3xl md:text-4xl font-headline font-extrabold text-on-surface placeholder:text-on-surface-variant/40 focus:ring-0 focus:outline-none transition-colors" placeholder="What are we aiming for?" type="text"/>
+<!-- Ghost Border on Focus -->
+<div class="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-primary-container group-focus-within:w-full transition-all duration-500 ease-out"></div>
+</div>
+<p class="mt-4 text-on-surface-variant text-base leading-relaxed max-w-lg">
+                Break it down. Every big achievement starts with one manageable step. Let's map it out.
+            </p>
+</div>
+<!-- Scrollable Content Area: Sub-steps -->
+<div class="flex-1 overflow-y-auto px-8 py-8 bg-surface-container-lowest">
+<div class="flex items-center gap-3 mb-6 text-on-surface-variant">
+<span class="material-symbols-outlined text-xl">route</span>
+<h3 class="font-headline font-semibold text-lg text-on-surface">Actionable Steps</h3>
+</div>
+<!-- List Style Input Area -->
+<div class="space-y-4">
+<!-- Existing Step 1 -->
+<div class="flex items-start gap-4 group">
+<div class="flex-shrink-0 mt-1">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant font-semibold text-sm">1</div>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-2xl p-4 transition-all duration-400 group-hover:bg-surface-container">
+<input aria-label="Step 1" class="w-full bg-transparent border-none p-0 text-lg font-body text-on-surface focus:ring-0 focus:outline-none" type="text" value="Research initial requirements"/>
+</div>
+<button aria-label="Remove step" class="mt-2 text-on-surface-variant/40 hover:text-error transition-colors p-2 opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<!-- Existing Step 2 -->
+<div class="flex items-start gap-4 group">
+<div class="flex-shrink-0 mt-1">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant font-semibold text-sm">2</div>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-2xl p-4 transition-all duration-400 group-hover:bg-surface-container">
+<input aria-label="Step 2" class="w-full bg-transparent border-none p-0 text-lg font-body text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 focus:outline-none" placeholder="What's next?" type="text"/>
+</div>
+<button aria-label="Remove step" class="mt-2 text-on-surface-variant/40 hover:text-error transition-colors p-2 opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<!-- Add New Step Button (Ghost Style) -->
+<div class="flex items-center gap-4 mt-2 ml-1">
+<div class="flex-shrink-0 w-8 flex justify-center">
+<div class="w-2 h-2 rounded-full bg-surface-container-high"></div>
+</div>
+<button class="flex items-center gap-2 text-primary hover:text-primary-dim transition-colors py-2 font-medium">
+<span class="material-symbols-outlined text-xl">add_circle</span>
+                        Add another step
+                    </button>
+</div>
+</div>
+<!-- Contextual Nudge / Tip -->
+<div class="mt-12 bg-tertiary-container/30 rounded-2xl p-5 flex items-start gap-4 w-11/12 ml-auto shadow-[0px_4px_12px_rgba(42,52,51,0.02)]">
+<span class="material-symbols-outlined text-tertiary mt-0.5">lightbulb</span>
+<div>
+<h4 class="font-headline font-semibold text-on-tertiary-container mb-1">Pro Tip</h4>
+<p class="text-on-tertiary-container/80 text-sm leading-relaxed">Keep steps small enough that you can complete them in one sitting. This builds momentum.</p>
+</div>
+</div>
+</div>
+<!-- Footer / Actions -->
+<div class="px-8 py-6 bg-surface-container-lowest border-t border-surface-container-low/50 flex justify-end gap-4">
+<button class="px-6 py-4 rounded-full text-on-surface-variant font-semibold hover:bg-surface-container-low transition-colors duration-400">
+                Cancel
+            </button>
+<!-- Primary Button with Signature Gradient -->
+<button class="px-8 py-4 rounded-full text-on-primary font-semibold shadow-[0px_8px_24px_rgba(0,107,100,0.15)] hover:shadow-[0px_12px_32px_rgba(0,107,100,0.2)] transition-all duration-400 hover:-translate-y-0.5 bg-gradient-to-br from-primary to-primary-container flex items-center gap-2">
+                Plant the Seed
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

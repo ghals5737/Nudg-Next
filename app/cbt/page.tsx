@@ -1,299 +1,168 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { MobileNav } from "@/components/mobile-nav"
-import { Button } from "@/components/ui/button"
-import { CBTDetailDialog } from "@/components/cbt-detail-dialog"
-import { QuickRecordDialog } from "@/components/quick-record-dialog"
-import { Plus, Filter, ChevronRight, ChevronDown } from "lucide-react"
-import { useState } from "react"
+import { cbtApi } from "@/lib/api/cbt"
+import type { CBTEntry, CreateCBTEntryRequest } from "@/types/api"
 
-type CBTEntry = {
-  id: number
-  date: string
-  time: string
-  emoji: string
-  mood: string
-  moodColor: "green" | "orange" | "red"
-  location?: string
-  impulse: string
-  copingMethod: string
-  result: "success" | "failure"
+const formatTime = (iso: string) => {
+  const date = new Date(iso)
+  const now = new Date()
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+  const timeStr = date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
+  if (diffDays === 0) return `오늘, ${timeStr}`
+  if (diffDays === 1) return `어제, ${timeStr}`
+  const weekdays = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"]
+  return `${weekdays[date.getDay()]}, ${timeStr}`
 }
 
-const sampleEntries: CBTEntry[] = [
-  {
-    id: 1,
-    date: "2025-12-11",
-    time: "11:57",
-    emoji: "😊",
-    mood: "좋음",
-    moodColor: "green",
-    location: "집",
-    impulse: "스마트폰을 계속 확인하고 싶은 충동",
-    copingMethod: "김호흡 4-7-8",
-    result: "success",
-  },
-  {
-    id: 2,
-    date: "2025-12-10",
-    time: "13:57",
-    emoji: "😐",
-    mood: "나쁨",
-    moodColor: "orange",
-    location: "사무실",
-    impulse: "일을 미루고 유튜브를 보고 싶음",
-    copingMethod: "5분 산책",
-    result: "success",
-  },
-  {
-    id: 3,
-    date: "2025-12-09",
-    time: "15:30",
-    emoji: "😩",
-    mood: "매우 나쁨",
-    moodColor: "red",
-    impulse: "화가 나서 물건을 던지고 싶음",
-    copingMethod: "음악 듣기",
-    result: "failure",
-  },
+const MOOD_PRESETS = [
+  { mood: "안도", emoji: "😊", moodBg: "#cce8e4", moodText: "#3d5653" },
+  { mood: "기쁨", emoji: "😄", moodBg: "#fef9c3", moodText: "#854d0e" },
+  { mood: "압도됨", emoji: "🌊", moodBg: "#b7e7ff", moodText: "#24566a" },
+  { mood: "불안", emoji: "😰", moodBg: "#fce7f3", moodText: "#9d174d" },
+  { mood: "안정됨", emoji: "🧘", moodBg: "#e1eae8", moodText: "#2a3433" },
+  { mood: "피곤함", emoji: "😴", moodBg: "#f3e8ff", moodText: "#6b21a8" },
 ]
 
-// Group entries by date
-function groupByDate(entries: CBTEntry[]) {
-  const groups: Record<string, CBTEntry[]> = {}
-  entries.forEach((entry) => {
-    if (!groups[entry.date]) {
-      groups[entry.date] = []
-    }
-    groups[entry.date].push(entry)
-  })
-  return groups
-}
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr)
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  const days = ["일", "월", "화", "수", "목", "금", "토"]
-  const dayOfWeek = days[date.getDay()]
-  return `${month}월 ${day}일 (${dayOfWeek})`
-}
-
-function getMoodColor(moodColor: string) {
-  switch (moodColor) {
-    case "green":
-      return "#4DB6AC"
-    case "orange":
-      return "#FF8A65"
-    case "red":
-      return "#E57373"
-    default:
-      return "#90A4AE"
-  }
-}
-
 export default function CBTPage() {
-  const [activeTab, setActiveTab] = useState<"timeline" | "list">("timeline")
-  const [timePeriod, setTimePeriod] = useState<"today" | "week" | "month">("today")
-  const [selectedEntry, setSelectedEntry] = useState<CBTEntry | null>(null)
-  const [detailOpen, setDetailOpen] = useState(false)
+  const [entries, setEntries] = useState<CBTEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
   const [quickRecordOpen, setQuickRecordOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
-  const groupedEntries = groupByDate(sampleEntries)
+  const [form, setForm] = useState<CreateCBTEntryRequest>({
+    emoji: "😊",
+    mood: "안도",
+    moodBg: "#cce8e4",
+    moodText: "#3d5653",
+    content: "",
+    tags: [],
+  })
+  const [tagInput, setTagInput] = useState("")
 
-  const handleEntryClick = (entry: CBTEntry) => {
-    setSelectedEntry(entry)
-    setDetailOpen(true)
+  const fetchEntries = (p = 1) => {
+    setLoading(true)
+    cbtApi.list(p)
+      .then((res) => {
+        setEntries(p === 1 ? res.data : (prev) => [...prev, ...res.data])
+        setTotal(res.total)
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
   }
+
+  useEffect(() => { fetchEntries(1) }, [])
+
+  const handleLoadMore = () => {
+    const next = page + 1
+    setPage(next)
+    fetchEntries(next)
+  }
+
+  const handleMoodSelect = (preset: typeof MOOD_PRESETS[0]) => {
+    setForm((f) => ({ ...f, ...preset }))
+  }
+
+  const handleTagAdd = () => {
+    const tag = tagInput.trim()
+    if (tag && !form.tags?.includes(tag)) {
+      setForm((f) => ({ ...f, tags: [...(f.tags ?? []), tag] }))
+    }
+    setTagInput("")
+  }
+
+  const handleTagRemove = (tag: string) => {
+    setForm((f) => ({ ...f, tags: f.tags?.filter((t) => t !== tag) }))
+  }
+
+  const handleSubmit = async () => {
+    if (!form.content.trim()) return
+    setSubmitting(true)
+    try {
+      await cbtApi.create(form)
+      setQuickRecordOpen(false)
+      setForm({ emoji: "😊", mood: "안도", moodBg: "#cce8e4", moodText: "#3d5653", content: "", tags: [] })
+      setTagInput("")
+      setPage(1)
+      fetchEntries(1)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const hasMore = entries.length < total
 
   return (
-    <div className="flex min-h-screen bg-[#F5F6F8]">
+    <div className="min-h-screen bg-[#f6faf8] text-[#2a3433] flex">
       <AppSidebar />
 
-      <main className="flex-1 ml-[260px]">
-        <div className="px-10 py-8 pb-24 md:pb-8">
-          {/* Header */}
-          <div className="mb-6 flex items-center justify-between">
+      <main className="flex-1 md:ml-72 flex flex-col min-h-screen">
+        <header className="hidden md:flex justify-end items-center px-8 pt-6 pb-4">
+          <button className="p-2 rounded-full hover:bg-[#eef5f3] transition-colors">
+            <span className="material-symbols-outlined text-2xl">notifications</span>
+          </button>
+        </header>
+
+        <div className="flex-1 px-4 md:px-12 py-6 md:py-8 max-w-4xl mx-auto w-full">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
             <div>
-              <h1 className="mb-1 text-2xl font-bold text-[#1A1B1E]">CBT 기록</h1>
-              <p className="text-sm text-[#868E96]">감정과 충동을 기록하고 대처법을 찾아보세요</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#2a3433] mb-2">감정 기록</h2>
+              <p className="text-lg text-[#56615f]">인지 여정을 부드럽게 기록해보세요.</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                className="text-[#343A40] hover:bg-[#F8F9FA] border border-[#E9ECEF]"
-              >
-                <ChevronDown className="mr-2 h-4 w-4" />
-                필터
-              </Button>
-              <Button
-                className="bg-[#4DB6AC] hover:bg-[#3AA996] text-white h-9 px-4 rounded-lg font-semibold shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                onClick={() => setQuickRecordOpen(true)}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                빠른 기록
-              </Button>
-            </div>
+            <button
+              onClick={() => setQuickRecordOpen(true)}
+              className="py-4 px-8 rounded-xl bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] font-semibold hover:opacity-90 transition-opacity duration-300 flex items-center gap-2 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] self-start md:self-auto"
+            >
+              <span className="material-symbols-outlined">edit_note</span>
+              기록 추가
+            </button>
           </div>
 
-          {/* Tabs and Date Selection */}
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setActiveTab("timeline")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === "timeline"
-                    ? "bg-[#4DB6AC] text-white shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                    : "text-[#868E96] hover:bg-[#F8F9FA]"
-                }`}
-              >
-                타임라인
-              </button>
-              <button
-                onClick={() => setActiveTab("list")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === "list"
-                    ? "bg-[#4DB6AC] text-white shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                    : "text-[#868E96] hover:bg-[#F8F9FA]"
-                }`}
-              >
-                목록
-              </button>
-            </div>
+          {loading && entries.length === 0 && <p className="text-[#56615f]">불러오는 중...</p>}
+          {!loading && entries.length === 0 && (
+            <p className="text-[#56615f] text-center py-16">아직 감정 기록이 없어요. 첫 기록을 남겨보세요!</p>
+          )}
 
-            <div className="flex gap-2">
-              {(["오늘", "주", "월"] as const).map((period) => {
-                const periodKey = period === "오늘" ? "today" : period === "주" ? "week" : "month"
-                return (
-                  <button
-                    key={period}
-                    onClick={() => setTimePeriod(periodKey)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      timePeriod === periodKey
-                        ? "bg-[#4DB6AC] text-white shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                        : "text-[#868E96] hover:bg-[#F8F9FA]"
-                    }`}
-                  >
-                    {period}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Timeline View */}
-          {activeTab === "timeline" ? (
-            <div className="space-y-8">
-              {Object.entries(groupedEntries).map(([date, entries]) => (
-                <div key={date}>
-                  <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-[#1A1B1E]">{formatDate(date)}</h2>
-                    <span className="text-sm text-[#868E96]">{entries.length}건</span>
-                  </div>
-
-                  <div className="relative space-y-4 border-l-2 border-[#E9ECEF] pl-6">
-                    {entries.map((entry) => (
-                      <div key={entry.id} className="relative">
-                        {/* Color dot */}
-                        <div
-                          className="absolute -left-[29px] top-2 h-3 w-3 rounded-full"
-                          style={{ backgroundColor: getMoodColor(entry.moodColor) }}
-                        />
-
-                        {/* Entry card */}
-                        <div
-                          className="group cursor-pointer rounded-lg bg-white p-4 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all hover:shadow-md"
-                          onClick={() => handleEntryClick(entry)}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              {/* Time */}
-                              <div className="mb-2 text-sm text-[#868E96]">{entry.time}</div>
-
-                              {/* Emotion and location */}
-                              <div className="mb-2 flex items-center gap-2">
-                                <span className="text-2xl">{entry.emoji}</span>
-                                <span
-                                  className="text-sm font-medium"
-                                  style={{ color: getMoodColor(entry.moodColor) }}
-                                >
-                                  {entry.mood}
-                                </span>
-                                {entry.location && (
-                                  <span className="text-sm text-[#868E96]">{entry.location}</span>
-                                )}
-                              </div>
-
-                              {/* Impulse */}
-                              <div className="mb-2 text-sm text-[#343A40]">{entry.impulse}</div>
-
-                              {/* Coping method and result */}
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm text-[#343A40]">{entry.copingMethod}</span>
-                                <span
-                                  className={`text-sm font-medium ${
-                                    entry.result === "success" ? "text-[#4DB6AC]" : "text-[#E57373]"
-                                  }`}
-                                >
-                                  {entry.result === "success" ? "성공" : "실패"}
-                                </span>
-                              </div>
-                            </div>
-                            <ChevronRight className="h-5 w-5 text-[#868E96] opacity-0 transition-opacity group-hover:opacity-100 ml-4" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+          <div className="relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:ml-[8.5rem] md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-[#e1eae8] before:to-transparent">
+            {entries.map((entry, index) => (
+              <div key={entry.id} className={`relative flex items-start gap-6 md:gap-12 ${index < entries.length - 1 ? "mb-12" : ""}`}>
+                <div className="hidden md:block w-24 text-right pt-4 shrink-0">
+                  <span className="text-sm font-semibold text-[#56615f]">{formatTime(entry.createdAt)}</span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {sampleEntries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="group cursor-pointer rounded-lg bg-white p-4 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all hover:shadow-md"
-                  onClick={() => handleEntryClick(entry)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex gap-3 flex-1">
-                      <span className="text-2xl">{entry.emoji}</span>
-                      <div className="flex-1">
-                        <div className="mb-1 flex items-center gap-2 text-sm text-[#868E96]">
-                          <span>
-                            {formatDate(entry.date)} {entry.time}
-                          </span>
-                        </div>
-                        <div className="mb-1 flex items-center gap-2">
-                          <span
-                            className="text-sm font-medium"
-                            style={{ color: getMoodColor(entry.moodColor) }}
-                          >
-                            {entry.mood}
-                          </span>
-                          {entry.location && (
-                            <span className="text-sm text-[#868E96]">{entry.location}</span>
-                          )}
-                        </div>
-                        <h3 className="mb-1 text-sm font-medium text-[#343A40]">{entry.impulse}</h3>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-[#343A40]">{entry.copingMethod}</span>
-                          <span
-                            className={`text-sm font-medium ${
-                              entry.result === "success" ? "text-[#4DB6AC]" : "text-[#E57373]"
-                            }`}
-                          >
-                            {entry.result === "success" ? "성공" : "실패"}
-                          </span>
-                        </div>
-                      </div>
+                <div className="absolute left-0 md:relative md:left-auto flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.06)] ring-4 ring-[#f6faf8] z-10 shrink-0 text-xl">
+                  {entry.emoji}
+                </div>
+                <div className="ml-14 md:ml-0 flex-1 bg-white rounded-xl p-6 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:bg-[#f6faf8]/80 transition-colors duration-300 group">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: entry.moodBg, color: entry.moodText }}>
+                      {entry.mood}
+                    </span>
+                    <span className="text-sm text-[#56615f] md:hidden">{formatTime(entry.createdAt)}</span>
+                  </div>
+                  <p className="text-[#2a3433] text-lg leading-relaxed">{entry.content}</p>
+                  {entry.tags && entry.tags.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-[#eef5f3] flex gap-2 flex-wrap">
+                      {entry.tags.map((tag) => (
+                        <span key={tag} className="text-xs text-[#56615f] bg-[#f6faf8] px-2 py-1 rounded-md">{tag}</span>
+                      ))}
                     </div>
-                    <ChevronRight className="h-5 w-5 text-[#868E96] opacity-0 transition-opacity group-hover:opacity-100 ml-4" />
-                  </div>
+                  )}
                 </div>
-              ))}
+              </div>
+            ))}
+          </div>
+
+          {hasMore && (
+            <div className="mt-12 text-center">
+              <button onClick={handleLoadMore} className="text-[#006b64] font-medium hover:text-[#005e57] transition-colors duration-300">
+                이전 기록 더 보기
+              </button>
             </div>
           )}
         </div>
@@ -301,8 +170,82 @@ export default function CBTPage() {
 
       <MobileNav />
 
-      <CBTDetailDialog open={detailOpen} onOpenChange={setDetailOpen} entry={selectedEntry} />
-      <QuickRecordDialog open={quickRecordOpen} onOpenChange={setQuickRecordOpen} />
+      {quickRecordOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#d9e5e2]/40 backdrop-blur-md px-4">
+          <div className="bg-white rounded-[3rem] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-[#2a3433]">감정 기록하기</h3>
+              <button onClick={() => setQuickRecordOpen(false)} className="text-[#56615f] hover:text-[#2a3433] p-2 rounded-full hover:bg-[#eef5f3] transition-colors">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            {/* 감정 선택 */}
+            <p className="text-sm font-semibold text-[#56615f] mb-3">지금 기분이 어때요?</p>
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              {MOOD_PRESETS.map((preset) => (
+                <button
+                  key={preset.mood}
+                  onClick={() => handleMoodSelect(preset)}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl text-sm font-medium transition-all ${
+                    form.mood === preset.mood
+                      ? "ring-2 ring-[#006b64] scale-95"
+                      : "hover:bg-[#f6faf8]"
+                  }`}
+                  style={form.mood === preset.mood ? { backgroundColor: preset.moodBg, color: preset.moodText } : {}}
+                >
+                  <span className="text-2xl">{preset.emoji}</span>
+                  {preset.mood}
+                </button>
+              ))}
+            </div>
+
+            {/* 내용 */}
+            <textarea
+              className="w-full bg-[#eef5f3] rounded-xl p-4 text-[#2a3433] placeholder:text-[#a9b4b2] border-none outline-none focus:ring-2 focus:ring-[#006b64]/20 resize-none mb-4"
+              rows={4}
+              placeholder="오늘 어떤 감정을 느끼셨나요?"
+              value={form.content}
+              onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+            />
+
+            {/* 태그 */}
+            <div className="flex gap-2 mb-2">
+              <input
+                className="flex-1 bg-[#f6faf8] rounded-xl px-4 py-2 text-sm text-[#2a3433] placeholder:text-[#a9b4b2] outline-none focus:ring-2 focus:ring-[#006b64]/20"
+                placeholder="태그 추가 (Enter)"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleTagAdd()}
+              />
+              <button onClick={handleTagAdd} className="px-3 py-2 rounded-xl bg-[#eef5f3] text-[#56615f] text-sm font-medium hover:bg-[#e7f0ed] transition-colors">
+                추가
+              </button>
+            </div>
+            {form.tags && form.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {form.tags.map((tag) => (
+                  <span key={tag} className="flex items-center gap-1 text-xs text-[#56615f] bg-[#f6faf8] px-2 py-1 rounded-md">
+                    {tag}
+                    <button onClick={() => handleTagRemove(tag)} className="hover:text-[#a83836]">×</button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button onClick={() => setQuickRecordOpen(false)} className="px-6 py-3 rounded-full text-[#56615f] font-semibold hover:bg-[#eef5f3] transition-colors">취소</button>
+              <button
+                onClick={handleSubmit}
+                disabled={submitting || !form.content.trim()}
+                className="px-8 py-3 rounded-full bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] font-bold shadow-[0px_8px_24px_rgba(0,107,100,0.15)] hover:shadow-[0px_12px_32px_rgba(0,107,100,0.2)] transition-all duration-300 disabled:opacity-50"
+              >
+                {submitting ? "저장 중..." : "저장"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

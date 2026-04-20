@@ -1,104 +1,132 @@
 "use client"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useState } from "react"
-import { Clock } from "lucide-react"
+import { routinesApi } from "@/lib/api/routines"
 
 interface NewRoutineDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSuccess?: () => void
 }
 
-export function NewRoutineDialog({ open, onOpenChange }: NewRoutineDialogProps) {
+const dayLabels = ["월", "화", "수", "목", "금", "토", "일"]
+
+export function NewRoutineDialog({ open, onOpenChange, onSuccess }: NewRoutineDialogProps) {
   const [title, setTitle] = useState("")
-  const [frequency, setFrequency] = useState<"매일" | "매주" | "격주" | "커스텀">("매일")
-  const [selectedDays, setSelectedDays] = useState<string[]>([])
-  const [time, setTime] = useState("09:00")
-  const [alarmEnabled, setAlarmEnabled] = useState(false)
+  const [time, setTime] = useState("07:00")
+  const [duration, setDuration] = useState(15)
+  const [selectedDays, setSelectedDays] = useState([true, true, true, true, true, false, false])
+  const [smartReminders, setSmartReminders] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const days = ["일", "월", "화", "수", "목", "금", "토"]
-
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(":").map(Number)
-    const period = hours >= 12 ? "오후" : "오전"
-    const displayHour = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours
-    return `${period} ${displayHour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
+  const toggleDay = (i: number) => {
+    const updated = [...selectedDays]
+    updated[i] = !updated[i]
+    setSelectedDays(updated)
   }
 
-  const toggleDay = (day: string) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter((d) => d !== day))
-    } else {
-      setSelectedDays([...selectedDays, day])
+  const handleClose = () => {
+    onOpenChange(false)
+    setTitle("")
+    setTime("07:00")
+    setDuration(15)
+    setSelectedDays([true, true, true, true, true, false, false])
+    setError(null)
+  }
+
+  const handleSubmit = async () => {
+    if (!title.trim()) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      await routinesApi.create({ title, time, duration, days: selectedDays, smartReminders })
+      handleClose()
+      onSuccess?.()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "오류가 발생했습니다.")
+    } finally {
+      setSubmitting(false)
     }
   }
 
-  const handleSubmit = () => {
-    // TODO: 실제로 루틴을 저장하는 로직
-    console.log("새 루틴 생성:", { title, frequency, selectedDays, time, alarmEnabled })
-    onOpenChange(false)
-    // Reset form
-    setTitle("")
-    setFrequency("매일")
-    setSelectedDays([])
-    setTime("09:00")
-    setAlarmEnabled(false)
-  }
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white sm:max-w-[560px] max-h-[90vh] overflow-y-auto rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] p-8">
-        <DialogHeader>
-          <DialogTitle className="text-[#1A1B1E] text-lg font-semibold">새 루틴</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-6 py-4">
-          {/* 루틴 제목 */}
-          <div className="space-y-2">
-            <Label className="text-[#343A40] text-sm font-medium">루틴 제목</Label>
-            <Input
-              placeholder="예: 아침 운동, 독서 시간..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-white text-[#343A40] border-[#E9ECEF] h-12 rounded-lg focus:border-[#4DB6AC] focus:ring-[#4DB6AC] focus:ring-[3px] focus:ring-opacity-10"
-            />
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="bg-[#f6faf8] sm:max-w-2xl rounded-[2rem] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] border-none p-0 gap-0 overflow-hidden">
+        <div className="px-8 pt-10 pb-6 max-h-[90vh] overflow-y-auto">
+          <div className="mb-12">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#2a3433] mb-4">새 루틴</h1>
+            <p className="text-lg text-[#56615f] leading-relaxed">부드러운 리듬을 만들어 보세요.</p>
           </div>
 
-          {/* 빈도 */}
-          <div className="space-y-3">
-            <Label className="text-[#343A40] text-sm font-medium">빈도</Label>
-            <div className="grid grid-cols-4 gap-2">
-              {(["매일", "매주", "격주", "커스텀"] as const).map((freq) => (
-                <button
-                  key={freq}
-                  onClick={() => setFrequency(freq)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    frequency === freq
-                      ? "bg-[#4DB6AC] text-white shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                      : "bg-[#F1F3F5] text-[#343A40] hover:bg-[#E9ECEF]"
-                  }`}
-                >
-                  {freq}
-                </button>
-              ))}
+          {error && (
+            <div className="flex items-center gap-2 bg-[#fef2f2] border border-[#fecaca] text-[#b91c1c] text-sm rounded-xl px-4 py-3 mb-6">
+              <span className="material-symbols-outlined text-base">error</span>
+              {error}
             </div>
-          </div>
+          )}
 
-          {/* 요일 */}
-          {frequency === "매일" && (
-            <div className="space-y-3">
-              <Label className="text-[#343A40] text-sm font-medium">요일</Label>
-              <div className="grid grid-cols-7 gap-2">
-                {days.map((day) => (
+          <div className="space-y-10">
+            {/* 이름 */}
+            <div className="flex flex-col gap-3">
+              <label className="text-xl font-semibold text-[#2a3433] tracking-tight">이름</label>
+              <div className="rounded-xl bg-white border-none shadow-[inset_0_0_0_2px_rgba(0,107,100,0.12)] focus-within:shadow-[inset_0_0_0_2px_#006b64] transition-all duration-300">
+                <input
+                  className="w-full bg-transparent border-none rounded-xl px-6 py-5 text-lg text-[#2a3433] focus:ring-0 focus:outline-none placeholder-[#a9b4b2]"
+                  placeholder="예: 아침 수분 보충"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* 시간 & 소요시간 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-3">
+                <label className="text-xl font-semibold text-[#2a3433] tracking-tight">시작 시간</label>
+                <div className="rounded-xl bg-white shadow-[inset_0_0_0_2px_rgba(0,107,100,0.12)] focus-within:shadow-[inset_0_0_0_2px_#006b64] transition-all">
+                  <input
+                    type="time"
+                    className="w-full bg-transparent border-none rounded-xl px-6 py-5 text-lg text-[#2a3433] focus:ring-0 focus:outline-none"
+                    value={time}
+                    onChange={(e) => setTime(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-3">
+                <label className="text-xl font-semibold text-[#2a3433] tracking-tight">소요 시간 (분)</label>
+                <div className="rounded-xl bg-white shadow-[inset_0_0_0_2px_rgba(0,107,100,0.12)] focus-within:shadow-[inset_0_0_0_2px_#006b64] transition-all">
+                  <input
+                    type="number"
+                    min={1}
+                    max={180}
+                    className="w-full bg-transparent border-none rounded-xl px-6 py-5 text-lg text-[#2a3433] focus:ring-0 focus:outline-none"
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 스케줄 */}
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-end">
+                <label className="text-xl font-semibold text-[#2a3433] tracking-tight">스케줄</label>
+                <span className="text-sm text-[#56615f] bg-[#eef5f3] px-3 py-1 rounded-full">
+                  {selectedDays.filter(Boolean).length === 7 ? "매일" : `주 ${selectedDays.filter(Boolean).length}회`}
+                </span>
+              </div>
+              <div className="flex justify-between items-center bg-[#eef5f3] p-4 rounded-xl">
+                {dayLabels.map((day, i) => (
                   <button
                     key={day}
-                    onClick={() => toggleDay(day)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedDays.includes(day)
-                        ? "bg-[#4DB6AC] text-white shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                        : "bg-[#F1F3F5] text-[#343A40] hover:bg-[#E9ECEF]"
+                    type="button"
+                    onClick={() => toggleDay(i)}
+                    className={`w-11 h-11 rounded-full font-semibold text-base flex items-center justify-center transition-all duration-300 ${
+                      selectedDays[i]
+                        ? "bg-[#006b64] text-[#e2fffa] shadow-sm hover:opacity-90"
+                        : "bg-[#d9e5e2] text-[#56615f] hover:bg-[#e7f0ed]"
                     }`}
                   >
                     {day}
@@ -106,54 +134,40 @@ export function NewRoutineDialog({ open, onOpenChange }: NewRoutineDialogProps) 
                 ))}
               </div>
             </div>
-          )}
 
-          {/* 시간 */}
-          <div className="space-y-2">
-            <Label className="text-[#343A40] text-sm font-medium">시간</Label>
-            <div className="relative">
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="bg-white text-[#343A40] border border-[#E9ECEF] h-12 w-full rounded-lg pl-4 pr-10 focus:border-[#4DB6AC] focus:ring-[#4DB6AC] focus:ring-[3px] focus:ring-opacity-10 outline-none"
-                style={{ color: "transparent" }}
-              />
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#343A40] text-sm">
-                {formatTime(time)}
+            {/* 스마트 리마인더 */}
+            <div className="flex flex-col gap-4 bg-[#eef5f3] p-6 rounded-xl relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-32 h-32 bg-[#7fe6db] rounded-full opacity-20 blur-2xl pointer-events-none" />
+              <div className="flex justify-between items-center relative z-10">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[#006b64] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>notifications_active</span>
+                  <h3 className="text-xl font-semibold text-[#2a3433] tracking-tight">스마트 리마인더</h3>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={smartReminders} onChange={(e) => setSmartReminders(e.target.checked)} />
+                  <div className="w-14 h-8 bg-[#d9e5e2] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-[#a9b4b2]/20 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-sm peer-checked:bg-[#006b64]" />
+                </label>
               </div>
-              <Clock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#868E96] pointer-events-none" />
+              <p className="text-base text-[#56615f] leading-relaxed mt-1 max-w-[90%] relative z-10">
+                집중 중일 때는 방해하지 않는 부드러운 알림으로 루틴을 기억시켜 드립니다.
+              </p>
+            </div>
+
+            <div className="pb-4 flex gap-4 items-center">
+              <button onClick={handleClose} className="flex-1 bg-[#d9e5e2] text-[#2a3433] font-semibold text-lg py-5 px-8 rounded-xl hover:bg-[#e7f0ed] transition-colors">
+                취소
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={!title.trim() || submitting}
+                className="flex-[2] bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] font-bold text-lg py-5 px-8 rounded-xl shadow-sm hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? "저장 중..." : "루틴 만들기"}
+              </button>
             </div>
           </div>
-
-          {/* 알람 */}
-          <div className="flex items-center justify-between">
-            <Label className="text-[#343A40] text-sm font-medium">알람</Label>
-            <Switch
-              checked={alarmEnabled}
-              onCheckedChange={setAlarmEnabled}
-              className="data-[state=checked]:bg-[#4DB6AC]"
-            />
-          </div>
-        </div>
-
-        {/* 하단 버튼 */}
-        <div className="flex justify-end gap-2 pt-4 border-t border-[#E9ECEF]">
-          <button
-            onClick={() => onOpenChange(false)}
-            className="px-4 py-2 text-sm text-[#868E96] hover:text-[#343A40] transition-colors"
-          >
-            취소
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-6 py-2 bg-[#4DB6AC] hover:bg-[#3AA996] text-white rounded-lg text-sm font-semibold shadow-[0_2px_6px_rgba(77,182,172,0.2)] transition-colors"
-          >
-            생성
-          </button>
         </div>
       </DialogContent>
     </Dialog>
   )
 }
-

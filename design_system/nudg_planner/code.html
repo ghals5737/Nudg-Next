@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudg - Planner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#2b4441",
+                        "tertiary-dim": "#28596d",
+                        "on-tertiary": "#f3faff",
+                        "surface-variant": "#d9e5e2",
+                        "tertiary": "#356579",
+                        "surface": "#f6faf8",
+                        "on-tertiary-fixed-variant": "#2f5f74",
+                        "inverse-primary": "#7fe6db",
+                        "surface-container": "#e7f0ed",
+                        "primary-fixed-dim": "#71d7cd",
+                        "on-secondary-container": "#3d5653",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-dim": "#3f5855",
+                        "outline": "#727d7b",
+                        "surface-container-high": "#e1eae8",
+                        "on-error-container": "#6e0a12",
+                        "inverse-surface": "#0a0f0e",
+                        "error": "#a83836",
+                        "background": "#f6faf8",
+                        "on-primary-fixed-variant": "#005d57",
+                        "primary-dim": "#005e57",
+                        "on-primary-fixed": "#003e39",
+                        "secondary": "#4a6461",
+                        "secondary-fixed-dim": "#bedad6",
+                        "on-surface-variant": "#56615f",
+                        "primary": "#006b64",
+                        "inverse-on-surface": "#999e9c",
+                        "tertiary-fixed-dim": "#a9d8f0",
+                        "error-container": "#fa746f",
+                        "on-primary": "#e2fffa",
+                        "surface-tint": "#006b64",
+                        "error-dim": "#67040d",
+                        "tertiary-fixed": "#b7e7ff",
+                        "secondary-fixed": "#cce8e4",
+                        "outline-variant": "#a9b4b2",
+                        "on-error": "#fff7f6",
+                        "surface-container-low": "#eef5f3",
+                        "surface-bright": "#f6faf8",
+                        "on-background": "#2a3433",
+                        "primary-fixed": "#7fe6db",
+                        "on-primary-container": "#00534d",
+                        "surface-container-highest": "#d9e5e2",
+                        "on-tertiary-fixed": "#0a4356",
+                        "on-tertiary-container": "#24566a",
+                        "primary-container": "#7fe6db",
+                        "on-secondary": "#e2fffa",
+                        "secondary-container": "#cce8e4",
+                        "surface-dim": "#d1dcda",
+                        "tertiary-container": "#b7e7ff",
+                        "on-secondary-fixed-variant": "#47605d",
+                        "on-surface": "#2a3433"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f6faf8; /* background */
+            color: #2a3433; /* on-background */
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col md:flex-row font-body bg-background text-on-background">
+<!-- SideNavBar (Hidden on Mobile, Flex on MD) -->
+<nav class="hidden md:flex bg-teal-50/70 dark:bg-slate-900/70 backdrop-blur-3xl fixed left-0 top-0 h-full flex-col py-8 px-4 w-72 rounded-r-[3rem] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] z-50">
+<div class="flex items-center gap-4 mb-12 px-6">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xl">
+                N
+            </div>
+<div>
+<h1 class="text-2xl font-bold tracking-tighter text-teal-700 dark:text-teal-300">Nudg</h1>
+<p class="text-sm text-slate-500 dark:text-slate-400">The Cognitive Sanctuary</p>
+</div>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center gap-4 text-slate-500 dark:text-slate-400 px-6 py-3 hover:text-teal-600 transition-colors hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all duration-400 ease-out rounded-full" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-medium">Home</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 bg-white/50 dark:bg-teal-900/30 text-teal-800 dark:text-teal-100 rounded-full px-6 py-3 font-semibold shadow-[0px_12px_32px_rgba(42,52,51,0.06)] glide-in active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span>Planner</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-slate-500 dark:text-slate-400 px-6 py-3 hover:text-teal-600 transition-colors hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all duration-400 ease-out rounded-full" href="#">
+<span class="material-symbols-outlined">cached</span>
+<span class="font-medium">Routines</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-slate-500 dark:text-slate-400 px-6 py-3 hover:text-teal-600 transition-colors hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all duration-400 ease-out rounded-full" href="#">
+<span class="material-symbols-outlined">flag</span>
+<span class="font-medium">Goals</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-slate-500 dark:text-slate-400 px-6 py-3 hover:text-teal-600 transition-colors hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all duration-400 ease-out rounded-full" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-medium">CBT</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto pt-8 border-t-0">
+<a class="flex items-center gap-4 text-slate-500 dark:text-slate-400 px-6 py-3 hover:text-teal-600 transition-colors hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all duration-400 ease-out rounded-full" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+<button class="mt-4 w-full py-4 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                New Entry
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 flex flex-col min-h-screen">
+<!-- TopNavBar (Responsive) -->
+<header class="bg-transparent full-width pt-6 px-8 flex justify-end items-center w-full max-w-7xl ml-auto px-8 soft-fade-in z-40 sticky top-0">
+<div class="flex items-center gap-6">
+<button class="text-teal-600 dark:text-teal-400 hover:opacity-80 transition-opacity duration-400">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+<button class="text-slate-400 dark:text-slate-500 hover:opacity-80 transition-opacity duration-400">
+<span class="material-symbols-outlined text-3xl">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 px-4 sm:px-8 lg:px-12 py-8 max-w-4xl mx-auto w-full">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="text-headline-lg font-bold tracking-tight text-on-surface mb-2">Today's Focus</h2>
+<p class="text-body-lg text-on-surface-variant">Tuesday, October 24</p>
+</div>
+<button class="hidden sm:flex items-center gap-2 px-6 py-3 rounded-full bg-secondary-container text-on-secondary-container font-semibold hover:bg-surface-container-high transition-colors duration-400">
+<span class="material-symbols-outlined">add</span>
+                    Quick Add
+                </button>
+</div>
+<!-- Time Blocks -->
+<div class="space-y-6 relative">
+<!-- Timeline visual line (ghosted) -->
+<div class="absolute left-[39px] top-4 bottom-4 w-px bg-outline-variant opacity-15 hidden sm:block"></div>
+<!-- Block 1: Active -->
+<div class="flex gap-4 sm:gap-8 items-start group">
+<div class="hidden sm:flex flex-col items-center min-w-[80px] pt-4">
+<span class="text-body-lg font-bold text-primary">09:00</span>
+<span class="text-label-md text-on-surface-variant mt-1">1h 30m</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest rounded-xl p-6 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] relative overflow-hidden transition-all duration-400 ease-out hover:shadow-[0px_16px_40px_rgba(42,52,51,0.08)]">
+<!-- Active indicator edge -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-primary-container"></div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2 sm:hidden">
+<span class="text-body-md font-bold text-primary">09:00</span>
+<span class="text-label-sm text-on-surface-variant px-2 py-1 bg-surface-container rounded-md">1h 30m</span>
+</div>
+<h3 class="text-title-lg font-bold text-on-surface mb-1">Deep Work: Strategy Draft</h3>
+<p class="text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                    Home Office
+                                </p>
+</div>
+<button class="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">snooze</span>
+                                15m Snooze
+                            </button>
+</div>
+</div>
+</div>
+<!-- Block 2: Upcoming -->
+<div class="flex gap-4 sm:gap-8 items-start group opacity-90">
+<div class="hidden sm:flex flex-col items-center min-w-[80px] pt-4">
+<span class="text-body-lg font-medium text-on-surface-variant">11:00</span>
+<span class="text-label-md text-on-surface-variant mt-1">45m</span>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-xl p-6 transition-all duration-400 ease-out hover:bg-surface-container">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2 sm:hidden">
+<span class="text-body-md font-medium text-on-surface-variant">11:00</span>
+<span class="text-label-sm text-on-surface-variant px-2 py-1 bg-surface-container-high rounded-md">45m</span>
+</div>
+<h3 class="text-title-lg font-semibold text-on-surface mb-1">Team Sync</h3>
+<p class="text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">videocam</span>
+                                    Google Meet
+                                </p>
+</div>
+<button class="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">snooze</span>
+                                15m
+                            </button>
+</div>
+</div>
+</div>
+<!-- Block 3: Upcoming -->
+<div class="flex gap-4 sm:gap-8 items-start group opacity-80">
+<div class="hidden sm:flex flex-col items-center min-w-[80px] pt-4">
+<span class="text-body-lg font-medium text-on-surface-variant">13:00</span>
+<span class="text-label-md text-on-surface-variant mt-1">1h</span>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-xl p-6 transition-all duration-400 ease-out hover:bg-surface-container">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2 sm:hidden">
+<span class="text-body-md font-medium text-on-surface-variant">13:00</span>
+<span class="text-label-sm text-on-surface-variant px-2 py-1 bg-surface-container-high rounded-md">1h</span>
+</div>
+<h3 class="text-title-lg font-semibold text-on-surface mb-1">Review Q3 Reports</h3>
+<p class="text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">description</span>
+                                    Finance Folder
+                                </p>
+</div>
+<button class="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">snooze</span>
+                                15m
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile FAB for Quick Add -->
+<button class="sm:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-[0px_12px_32px_rgba(42,52,51,0.06)] flex items-center justify-center z-50">
+<span class="material-symbols-outlined text-2xl">add</span>
+</button>
+</div>
+</main>
+</body></html>

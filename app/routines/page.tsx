@@ -1,258 +1,144 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { MobileNav } from "@/components/mobile-nav"
-import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { Plus, Check, MoreVertical, Calendar, Clock, Bell } from "lucide-react"
-import { useState } from "react"
 import { NewRoutineDialog } from "@/components/new-routine-dialog"
+import { routinesApi } from "@/lib/api/routines"
+import type { RoutineWithRhythm } from "@/types/api"
 
-type Routine = {
-  id: number
-  title: string
-  duration: number
-  time: string
-  days: string[]
-  notificationType: string
-  notificationMessage: string
-  emoji: string
-  weeklyProgress: number[]
-  active: boolean
-  timeUntil?: string
-}
-
-const sampleRoutines: Routine[] = [
-  {
-    id: 1,
-    title: "아침 운동",
-    duration: 30,
-    time: "07:00",
-    days: ["매일", "월", "화", "수", "목", "금"],
-    notificationType: "보통 알림",
-    notificationMessage: "운동할 시간이에요!",
-    emoji: "🤙",
-    weeklyProgress: [1, 1, 1, 1, 1, 0, 1], // 6/7 = 86%
-    active: true,
-    timeUntil: "지금",
-  },
-  {
-    id: 2,
-    title: "독서 시간",
-    duration: 20,
-    time: "19:00",
-    days: ["매일", "일", "월", "화", "수", "목", "금", "토"],
-    notificationType: "부드러운 알림",
-    notificationMessage: "책 읽을 시간이에요",
-    emoji: "📚",
-    weeklyProgress: [1, 1, 1, 0, 0, 1, 0], // 4/7 = 57%
-    active: true,
-    timeUntil: "7시간 7분 후",
-  },
-  {
-    id: 3,
-    title: "명상",
-    duration: 10,
-    time: "21:30",
-    days: ["매일", "일", "월", "화", "수", "목", "금", "토"],
-    notificationType: "",
-    notificationMessage: "",
-    emoji: "",
-    weeklyProgress: [1, 1, 1, 1, 0, 1, 0], // 5/7 = 71%
-    active: true,
-    timeUntil: "9시간 37분 후",
-  },
-]
-
-const inactiveRoutines: Routine[] = []
+const dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
 
 export default function RoutinesPage() {
-  const [routines, setRoutines] = useState<Routine[]>(sampleRoutines)
-  const [inactive, setInactive] = useState<Routine[]>(inactiveRoutines)
+  const [routines, setRoutines] = useState<RoutineWithRhythm[]>([])
+  const [loading, setLoading] = useState(true)
   const [showNewRoutineDialog, setShowNewRoutineDialog] = useState(false)
 
-  const calculateSuccessRate = (progress: number[]) => {
-    const completed = progress.filter((p) => p === 1).length
-    return Math.round((completed / progress.length) * 100)
+  const fetchRoutines = () => {
+    routinesApi.list()
+      .then((res) => setRoutines(res.data))
+      .catch(console.error)
+      .finally(() => setLoading(false))
   }
 
-  const formatDays = (days: string[]) => {
-    if (days[0] === "매일") {
-      return `매일·${days.slice(1).join(", ")}`
-    }
-    return days.join(", ")
+  useEffect(() => { fetchRoutines() }, [])
+
+  const toggleRoutine = async (id: string) => {
+    await routinesApi.toggle(id)
+    fetchRoutines()
   }
 
   return (
-    <div className="flex min-h-screen bg-[#F5F6F8]">
+    <div className="min-h-screen bg-[#f6faf8] text-[#2a3433] flex">
       <AppSidebar />
 
-      <main className="flex-1 ml-[260px]">
-        <div className="px-10 py-8 pb-24 md:pb-8">
-          {/* Header */}
-          <div className="mb-8 flex items-start justify-between">
+      <main className="flex-1 md:ml-72 flex flex-col min-h-screen">
+        <header className="hidden md:flex justify-end items-center px-8 pt-6 pb-4">
+          <button className="p-2 rounded-full hover:bg-[#eef5f3] transition-colors relative">
+            <span className="material-symbols-outlined text-2xl">notifications</span>
+          </button>
+        </header>
+
+        <div className="px-6 md:px-8 pb-24 md:pb-8 flex-1 flex flex-col max-w-4xl mx-auto w-full">
+          <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <h1 className="mb-2 text-2xl font-bold text-[#1A1B1E]">루틴</h1>
-              <p className="text-sm text-[#868E96]">반복 작업을 관리하고 습관을 만들어보세요</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-[#2a3433] tracking-tight mb-3">나의 루틴</h2>
+              <p className="text-lg text-[#56615f] leading-relaxed">부드러운 리듬을 만들어 보세요. 습관이 당신을 변화시킵니다.</p>
             </div>
-            <Button
+            <button
               onClick={() => setShowNewRoutineDialog(true)}
-              className="bg-[#4DB6AC] hover:bg-[#3AA996] text-white h-9 px-4 rounded-lg font-semibold shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
+              className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#e1eae8] text-[#2a3433] hover:bg-[#d9e5e2] transition-colors duration-300 font-semibold shadow-sm"
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <span className="material-symbols-outlined text-lg">add</span>
               새 루틴
-            </Button>
+            </button>
           </div>
 
-          {/* 활성 루틴 */}
-          <div className="mb-8">
-            <h2 className="mb-4 text-lg font-semibold text-[#1A1B1E]">활성 루틴</h2>
-            <div className="space-y-4">
-              {routines.map((routine) => {
-                const successRate = calculateSuccessRate(routine.weeklyProgress)
-                return (
-                  <div
-                    key={routine.id}
-                    className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6"
-                  >
-                    {/* Header with toggle and menu */}
-                    <div className="mb-4 flex items-start justify-between">
-                      <h3 className="text-base font-semibold text-[#343A40]">{routine.title}</h3>
-                      <div className="flex items-center gap-3">
-                        <Switch
-                          checked={routine.active}
-                          className="data-[state=checked]:bg-[#4DB6AC]"
-                        />
-                        <button className="p-1 hover:bg-[#F8F9FA] rounded-lg transition-colors">
-                          <MoreVertical className="h-4 w-4 text-[#868E96]" />
-                        </button>
-                      </div>
-                    </div>
+          {loading && <p className="text-[#56615f]">불러오는 중...</p>}
 
-                    {/* Schedule */}
-                    <div className="mb-2 flex items-center gap-2 text-sm text-[#868E96]">
-                      <Calendar className="h-4 w-4" />
-                      <span>{formatDays(routine.days)}</span>
-                    </div>
-
-                    {/* Time */}
-                    <div className="mb-2 flex items-center gap-2 text-sm text-[#868E96]">
-                      <Clock className="h-4 w-4" />
-                      <span>
-                        {routine.time} · {routine.timeUntil}
-                      </span>
-                    </div>
-
-                    {/* Notification */}
-                    {routine.notificationType && (
-                      <div className="mb-4 flex items-center gap-2 text-sm text-[#868E96]">
-                        <Bell className="h-4 w-4" />
-                        <span>
-                          {routine.notificationType} · {routine.notificationMessage} {routine.emoji}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Weekly progress */}
-                    <div className="mb-4">
-                      <div className="mb-2 flex items-center justify-between text-xs">
-                        <span className="text-[#868E96]">최근 7일</span>
-                        <span className="font-medium text-[#4DB6AC]">{successRate}% 성공</span>
-                      </div>
-                      <div className="flex gap-1">
-                        {routine.weeklyProgress.map((completed, index) => (
-                          <div
-                            key={index}
-                            className={`h-2 flex-1 rounded ${
-                              completed === 1 ? "bg-[#4DB6AC]" : "bg-[#E9ECEF]"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-2">
-                      <Button className="flex-1 bg-[#4DB6AC] hover:bg-[#3AA996] text-white h-10 rounded-lg font-semibold shadow-[0_2px_6px_rgba(77,182,172,0.2)]">
-                        <Check className="mr-2 h-4 w-4" />
-                        ✓ 완료
-                      </Button>
-                      <button className="px-3 py-2 text-xs text-[#868E96] hover:text-[#343A40] hover:bg-[#F8F9FA] rounded-lg transition-colors">
-                        <Clock className="inline h-3 w-3 mr-1" />
-                        ① 15분 미루기
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* 비활성 루틴 */}
-          {inactive.length > 0 && (
-            <div>
-              <h2 className="mb-4 text-lg font-semibold text-[#1A1B1E]">비활성 루틴</h2>
-              <div className="space-y-4">
-                {inactive.map((routine) => {
-                  const successRate = calculateSuccessRate(routine.weeklyProgress)
-                  return (
-                    <div
-                      key={routine.id}
-                      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 opacity-60"
-                    >
-                      {/* Header with toggle and menu */}
-                      <div className="mb-4 flex items-start justify-between">
-                        <h3 className="text-base font-semibold text-[#343A40]">{routine.title}</h3>
-                        <div className="flex items-center gap-3">
-                          <Switch checked={routine.active} />
-                          <button className="p-1 hover:bg-[#F8F9FA] rounded-lg transition-colors">
-                            <MoreVertical className="h-4 w-4 text-[#868E96]" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Schedule */}
-                      <div className="mb-2 flex items-center gap-2 text-sm text-[#868E96]">
-                        <Calendar className="h-4 w-4" />
-                        <span>{formatDays(routine.days)}</span>
-                      </div>
-
-                      {/* Time */}
-                      <div className="mb-2 flex items-center gap-2 text-sm text-[#868E96]">
-                        <Clock className="h-4 w-4" />
-                        <span>{routine.time}</span>
-                      </div>
-
-                      {/* Weekly progress */}
-                      <div>
-                        <div className="mb-2 flex items-center justify-between text-xs">
-                          <span className="text-[#868E96]">최근 7일</span>
-                          <span className="font-medium text-[#868E96]">{successRate}% 성공</span>
-                        </div>
-                        <div className="flex gap-1">
-                          {routine.weeklyProgress.map((completed, index) => (
-                            <div
-                              key={index}
-                              className={`h-2 flex-1 rounded ${
-                                completed === 1 ? "bg-[#4DB6AC]" : "bg-[#E9ECEF]"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+          {!loading && routines.length === 0 && (
+            <div className="bg-[#eef5f3] rounded-xl p-8 text-center text-[#56615f]">
+              아직 루틴이 없어요. 첫 루틴을 만들어보세요!
             </div>
           )}
+
+          <div className="space-y-6">
+            {routines.map((routine) => (
+              <div
+                key={routine.id}
+                className={`group rounded-xl p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8 transition-all duration-300 ease-out relative overflow-hidden ${
+                  routine.active
+                    ? "bg-white hover:shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:-translate-y-1"
+                    : "bg-[#eef5f3] hover:bg-white hover:shadow-[0px_12px_32px_rgba(42,52,51,0.06)]"
+                }`}
+              >
+                <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl ${routine.active ? "bg-[#006b64]" : "bg-[#d9e5e2]"} transition-colors`} />
+
+                <div className={`flex items-start gap-5 flex-1 min-w-[250px] ${!routine.active ? "opacity-70 group-hover:opacity-100 transition-opacity duration-300" : ""}`}>
+                  <div className="w-14 h-14 shrink-0 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundColor: routine.iconBg }}>
+                    <span className="material-symbols-outlined text-2xl text-[#006b64]" style={{ fontVariationSettings: "'FILL' 1" }}>{routine.icon}</span>
+                  </div>
+                  <div className="pt-1">
+                    <h3 className="text-xl font-bold text-[#2a3433] tracking-tight mb-1">{routine.title}</h3>
+                    <p className="text-sm text-[#56615f]">{routine.duration}분 · {routine.time}</p>
+                  </div>
+                </div>
+
+                <div className={`flex flex-wrap items-center gap-8 lg:gap-12 flex-shrink-0 ${!routine.active ? "opacity-60 group-hover:opacity-100 transition-opacity duration-300" : ""}`}>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-semibold tracking-widest uppercase text-[#56615f]/70">스케줄</span>
+                    <div className="flex gap-1.5">
+                      {dayLabels.map((day, i) => (
+                        <div
+                          key={i}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm ${
+                            routine.days[i] ? "bg-[#7fe6db] text-[#00534d]" : "bg-[#f6faf8] text-[#56615f] font-medium"
+                          }`}
+                        >
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-semibold tracking-widest uppercase text-[#56615f]/70">7일 리듬 ({routine.successRate}%)</span>
+                    <div className="flex gap-2 items-center h-8">
+                      {routine.rhythm.map((done, i) => (
+                        <div
+                          key={i}
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            done ? "bg-[#006b64] shadow-sm" : i === routine.rhythm.length - 1 ? "bg-[#e7f0ed] ring-1 ring-[#a9b4b2]/50" : "bg-[#d9e5e2]"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute right-6 top-6 lg:relative lg:right-0 lg:top-0">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={routine.active}
+                      onChange={() => toggleRoutine(routine.id)}
+                    />
+                    <div className="w-14 h-8 bg-[#d9e5e2] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-[#a9b4b2]/20 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-sm peer-checked:bg-[#006b64]" />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="h-12" />
         </div>
       </main>
 
       <MobileNav />
-
-      {/* New Routine Dialog */}
-      <NewRoutineDialog open={showNewRoutineDialog} onOpenChange={setShowNewRoutineDialog} />
+      <NewRoutineDialog
+        open={showNewRoutineDialog}
+        onOpenChange={setShowNewRoutineDialog}
+        onSuccess={() => fetchRoutines()}
+      />
     </div>
   )
 }

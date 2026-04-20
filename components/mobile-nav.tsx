@@ -1,41 +1,46 @@
 "use client"
 
-import { Home, Calendar, Target, RotateCcw, Heart } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "홈", href: "/", icon: Home },
-  { name: "캘린더", href: "/planner", icon: Calendar },
-  { name: "CBT", href: "/cbt", icon: Heart },
-  { name: "루틴", href: "/routines", icon: RotateCcw },
-  { name: "목표", href: "/goals", icon: Target },
+  { name: "홈", href: "/", icon: "home" },
+  { name: "플래너", href: "/planner", icon: "calendar_today" },
+  { name: "루틴", href: "/routines", icon: "cached" },
+  { name: "목표", href: "/goals", icon: "track_changes" },
+  { name: "CBT", href: "/cbt", icon: "psychology" },
 ]
 
 export function MobileNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-bg-elev md:hidden">
-      <div className="flex items-center justify-around">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg pb-safe">
+      <ul className="flex items-center justify-around p-3">
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex flex-col items-center gap-1 px-3 py-2 text-xs font-medium transition-colors",
-                isActive ? "text-brand" : "text-text-sub",
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              {item.name}
-            </Link>
+            <li key={item.name}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "flex flex-col items-center gap-1 p-2 transition-colors",
+                  isActive ? "text-[#006b64]" : "text-[#56615f]"
+                )}
+              >
+                <span
+                  className="material-symbols-outlined text-2xl"
+                  style={isActive ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                >
+                  {item.icon}
+                </span>
+                <span className="text-[10px] font-medium">{item.name}</span>
+              </Link>
+            </li>
           )
         })}
-      </div>
+      </ul>
     </nav>
   )
 }

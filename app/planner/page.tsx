@@ -1,220 +1,191 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { MobileNav } from "@/components/mobile-nav"
 import { NewScheduleDialog } from "@/components/new-schedule-dialog"
-import { Button } from "@/components/ui/button"
-import { Plus, ChevronLeft, ChevronRight, Clock, Calendar, Copy, FileText } from "lucide-react"
-import { useState } from "react"
+import { scheduleApi } from "@/lib/api/schedule"
+import type { ScheduleBlock } from "@/types/api"
 
-// Sample tasks for demonstration
-const sampleTasks = [
-  {
-    id: 1,
-    title: "프로젝트 기획서 작성",
-    startTime: 10,
-    endTime: 11.5,
-    duration: 1.5,
-    color: "#7986CB", // blue
-  },
-]
+const toDateStr = (date: Date) => date.toISOString().slice(0, 10)
+
+const toTimeStr = (t: number) => {
+  const h = Math.floor(t)
+  const m = Math.round((t - h) * 60)
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
+}
+
+const toDurationStr = (hours: number) => {
+  const h = Math.floor(hours)
+  const m = Math.round((hours - h) * 60)
+  if (h === 0) return `${m}분`
+  if (m === 0) return `${h}시간`
+  return `${h}시간 ${m}분`
+}
 
 export default function PlannerPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [tasks] = useState(sampleTasks)
+  const [blocks, setBlocks] = useState<ScheduleBlock[]>([])
+  const [loading, setLoading] = useState(true)
   const [showNewScheduleDialog, setShowNewScheduleDialog] = useState(false)
 
-  // 08:00부터 17:00까지 시간 슬롯
-  const hours = Array.from({ length: 10 }, (_, i) => i + 8)
-  const now = new Date()
-  const currentHour = now.getHours()
-  const currentMinute = now.getMinutes()
-  const currentTimePosition = ((currentHour - 8) * 60 + currentMinute) / 60 // 8시 기준으로 시간 위치 계산
+  const fetchBlocks = (date: Date) => {
+    setLoading(true)
+    scheduleApi.list(toDateStr(date))
+      .then((res) => setBlocks(res.data))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => { fetchBlocks(currentDate) }, [currentDate])
+
+  const goTo = (offset: number) => {
+    const d = new Date(currentDate)
+    d.setDate(d.getDate() + offset)
+    setCurrentDate(d)
+  }
 
   const formatDate = (date: Date) => {
-    const month = date.getMonth() + 1
-    const day = date.getDate()
-    const weekday = new Intl.DateTimeFormat("ko-KR", { weekday: "short" }).format(date)
-    return `${month}월 ${day}일 (${weekday})`
-  }
-
-  const goToPreviousDay = () => {
-    const newDate = new Date(currentDate)
-    newDate.setDate(newDate.getDate() - 1)
-    setCurrentDate(newDate)
-  }
-
-  const goToNextDay = () => {
-    const newDate = new Date(currentDate)
-    newDate.setDate(newDate.getDate() + 1)
-    setCurrentDate(newDate)
-  }
-
-  const goToToday = () => {
-    setCurrentDate(new Date())
+    const weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+    return `${date.getMonth() + 1}월 ${date.getDate()}일 (${weekdays[date.getDay()]})`
   }
 
   const isToday = () => {
     const today = new Date()
-    return (
-      currentDate.getDate() === today.getDate() &&
-      currentDate.getMonth() === today.getMonth() &&
-      currentDate.getFullYear() === today.getFullYear()
-    )
+    return currentDate.toDateString() === today.toDateString()
+  }
+
+  const now = new Date()
+  const currentHour = now.getHours()
+  const hours = Array.from({ length: 16 }, (_, i) => i + 6) // 06:00 ~ 21:00
+
+  const handleSnooze = async (id: string) => {
+    await scheduleApi.snooze(id, { minutes: 15 })
+    fetchBlocks(currentDate)
+  }
+
+  const getBlockForHour = (hour: number) =>
+    blocks.find((b) => hour === Math.floor(b.startTime))
+
+  const isActiveBlock = (block: ScheduleBlock) => {
+    const nowDecimal = now.getHours() + now.getMinutes() / 60
+    return isToday() && nowDecimal >= block.startTime && nowDecimal < block.endTime
   }
 
   return (
-    <div className="flex min-h-screen bg-[#F5F6F8]">
+    <div className="min-h-screen bg-[#f6faf8] text-[#2a3433] flex">
       <AppSidebar />
 
-      <main className="flex-1 ml-[260px]">
-        <div className="flex h-full">
-          {/* 중앙 플래너 영역 */}
-          <div className="flex-1 bg-white">
-            <div className="px-10 py-8">
-              {/* Header */}
-              <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-lg font-semibold text-[#1A1B1E]">플래너</h1>
-                  <Calendar className="h-4 w-4 text-[#868E96]" />
-                  <span className="text-sm text-[#868E96]">{formatDate(currentDate)}</span>
-                </div>
+      <main className="flex-1 md:ml-72 flex flex-col min-h-screen">
+        <header className="hidden md:flex justify-end items-center px-8 pt-6 pb-4">
+          <button className="p-2 rounded-full hover:bg-[#eef5f3] transition-colors">
+            <span className="material-symbols-outlined text-2xl">notifications</span>
+          </button>
+        </header>
 
-                <div className="flex items-center gap-3">
-                  <Button
-                    onClick={() => setShowNewScheduleDialog(true)}
-                    className="bg-[#4DB6AC] hover:bg-[#3AA996] text-white h-9 px-4 rounded-lg font-semibold shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    새 블록
-                  </Button>
-                  <div className="flex items-center gap-2 text-[#1A1B1E]">
-                    <button
-                      onClick={goToPreviousDay}
-                      className="p-1 hover:bg-[#F8F9FA] rounded-lg transition-colors"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={goToToday}
-                      className="px-3 py-1 text-sm hover:bg-[#F8F9FA] rounded-lg transition-colors"
-                    >
-                      오늘
-                    </button>
-                    <button
-                      onClick={goToNextDay}
-                      className="p-1 hover:bg-[#F8F9FA] rounded-lg transition-colors"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Timeline View */}
-              <div className="relative">
-                {/* Current time indicator - 오늘일 때만 표시 */}
-                {isToday() && currentHour >= 8 && currentHour <= 17 && (
-                  <div
-                    className="absolute left-0 right-0 z-10 flex items-center"
-                    style={{ top: `${(currentTimePosition / 10) * 100}%` }}
-                  >
-                    <div className="h-0.5 flex-1 bg-[#4DB6AC]" />
-                    <div className="flex h-3 w-3 items-center justify-center rounded-full bg-[#4DB6AC]">
-                      <div className="h-1.5 w-1.5 rounded-full bg-white" />
-                    </div>
-                  </div>
+        <div className="flex-1 px-4 sm:px-8 lg:px-12 pb-24 md:pb-8 max-w-4xl mx-auto w-full">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#2a3433] mb-2">오늘의 집중</h2>
+              <div className="flex items-center gap-3 text-[#56615f]">
+                <button onClick={() => goTo(-1)} className="p-1 hover:text-[#006b64] transition-colors">
+                  <span className="material-symbols-outlined text-xl">chevron_left</span>
+                </button>
+                <span className="font-medium">{formatDate(currentDate)}</span>
+                <button onClick={() => goTo(1)} className="p-1 hover:text-[#006b64] transition-colors">
+                  <span className="material-symbols-outlined text-xl">chevron_right</span>
+                </button>
+                {!isToday() && (
+                  <button onClick={() => setCurrentDate(new Date())} className="text-sm text-[#006b64] hover:text-[#005e57] font-medium">오늘</button>
                 )}
+              </div>
+            </div>
+            <button
+              onClick={() => setShowNewScheduleDialog(true)}
+              className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-full bg-[#cce8e4] text-[#3d5653] font-semibold hover:bg-[#e1eae8] transition-colors duration-300"
+            >
+              <span className="material-symbols-outlined">add</span>
+              새 블록
+            </button>
+          </div>
 
-                {/* Hour grid */}
-                <div className="space-y-0 border-l border-[#E9ECEF]">
-                  {hours.map((hour) => {
-                    const tasksAtThisHour = tasks.filter(
-                      (task) => hour >= task.startTime && hour < task.endTime,
-                    )
+          {loading ? (
+            <p className="text-[#56615f]">불러오는 중...</p>
+          ) : (
+            <div className="space-y-6 relative">
+              <div className="absolute left-[39px] top-4 bottom-4 w-px bg-[#a9b4b2] opacity-15 hidden sm:block" />
+              {hours.map((hour) => {
+                const block = getBlockForHour(hour)
+                const isActive = block ? isActiveBlock(block) : false
+                const isPast = isToday() && hour < currentHour
 
-                    return (
-                      <div
-                        key={hour}
-                        className="relative flex border-b border-[#E9ECEF]"
-                        style={{ minHeight: "80px" }}
-                      >
-                        {/* Hour label */}
-                        <div className="flex w-20 flex-shrink-0 items-start justify-end pr-4 pt-2">
-                          <span className="text-sm font-medium text-[#868E96]">
-                            {hour.toString().padStart(2, "0")}:00
-                          </span>
-                        </div>
+                return (
+                  <div key={hour} className="flex gap-4 sm:gap-8 items-start group">
+                    <div className="hidden sm:flex flex-col items-center min-w-[80px] pt-4">
+                      <span className={`font-bold ${isActive ? "text-[#006b64]" : isPast ? "text-[#a9b4b2]" : "text-[#56615f]"}`}>
+                        {hour.toString().padStart(2, "0")}:00
+                      </span>
+                      {block && (
+                        <span className="text-xs text-[#56615f] mt-1">{toDurationStr(block.duration)}</span>
+                      )}
+                    </div>
 
-                        {/* Task area */}
-                        <div className="relative flex-1 py-2">
-                          {tasksAtThisHour.map((task) => {
-                            // Only render the task card at its start hour
-                            if (hour === Math.floor(task.startTime)) {
-                              const startOffset = (task.startTime - hour) * 80 // 시간당 80px
-                              const heightInPixels = task.duration * 80
-                              return (
-                                <div
-                                  key={task.id}
-                                  className="absolute left-2 right-2 cursor-pointer rounded-lg bg-white border-l-4 p-3 transition-all hover:shadow-md"
-                                  style={{
-                                    height: `${heightInPixels}px`,
-                                    top: `${startOffset}px`,
-                                    borderLeftColor: task.color,
-                                  }}
-                                >
-                                  <h3 className="font-medium text-[#343A40] text-sm">{task.title}</h3>
-                                  <p className="mt-1 text-xs text-[#868E96]">
-                                    {Math.floor(task.startTime)
-                                      .toString()
-                                      .padStart(2, "0")}:{task.startTime % 1 === 0 ? "00" : "30"} -{" "}
-                                    {Math.floor(task.endTime)
-                                      .toString()
-                                      .padStart(2, "0")}:{task.endTime % 1 === 0 ? "00" : "30"} •{" "}
-                                    {task.duration === 1.5 ? "1h 30m" : `${task.duration}h`}
-                                  </p>
-                                </div>
-                              )
-                            }
-                            return null
-                          })}
+                    {block ? (
+                      <div className={`flex-1 rounded-xl p-6 relative overflow-hidden transition-all duration-300 ease-out hover:shadow-[0px_16px_40px_rgba(42,52,51,0.08)] ${
+                        isActive ? "bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.06)]" : "bg-[#eef5f3] hover:bg-[#e7f0ed]"
+                      } ${isPast && !isActive ? "opacity-50" : ""}`}>
+                        {isActive && (
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#006b64] to-[#7fe6db]" />
+                        )}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div>
+                            <div className="flex items-center gap-2 mb-2 sm:hidden">
+                              <span className={`text-sm font-bold ${isActive ? "text-[#006b64]" : "text-[#56615f]"}`}>{toTimeStr(block.startTime)}</span>
+                            </div>
+                            <h3 className="text-lg font-bold text-[#2a3433] mb-1">{block.title}</h3>
+                            {block.location && (
+                              <p className="text-sm text-[#56615f] flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm">location_on</span>
+                                {block.location}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleSnooze(block.id)}
+                            className="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full bg-[#eef5f3] text-[#56615f] hover:bg-[#e7f0ed] hover:text-[#2a3433] transition-colors text-sm font-medium"
+                          >
+                            <span className="material-symbols-outlined text-sm">snooze</span>
+                            15분
+                          </button>
                         </div>
                       </div>
-                    )
-                  })}
-                </div>
-              </div>
+                    ) : (
+                      <div className="flex-1 py-4">
+                        <div className="h-px bg-[#e7f0ed]" />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-          </div>
-
-          {/* 오른쪽 빠른 액션 패널 */}
-          <div className="w-64 bg-white border-l border-[#E9ECEF] p-6">
-            <h2 className="text-sm font-semibold text-[#1A1B1E] mb-4">빠른 액션</h2>
-            <div className="space-y-2">
-              <button
-                onClick={() => setShowNewScheduleDialog(true)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#F8F9FA] transition-colors text-left"
-              >
-                <Plus className="h-4 w-4 text-[#868E96]" />
-                <span className="text-sm text-[#343A40]">새 블록 추가</span>
-              </button>
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#F8F9FA] transition-colors text-left">
-                <Copy className="h-4 w-4 text-[#868E96]" />
-                <span className="text-sm text-[#343A40]">어제 일정 복사</span>
-              </button>
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#F8F9FA] transition-colors text-left">
-                <FileText className="h-4 w-4 text-[#868E96]" />
-                <span className="text-sm text-[#343A40]">템플릿 적용</span>
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </main>
 
-      <MobileNav />
+      <button
+        onClick={() => setShowNewScheduleDialog(true)}
+        className="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] flex items-center justify-center z-50"
+      >
+        <span className="material-symbols-outlined text-2xl">add</span>
+      </button>
 
-      {/* New schedule dialog */}
-      <NewScheduleDialog open={showNewScheduleDialog} onOpenChange={setShowNewScheduleDialog} />
+      <MobileNav />
+      <NewScheduleDialog
+        open={showNewScheduleDialog}
+        onOpenChange={setShowNewScheduleDialog}
+        date={toDateStr(currentDate)}
+        onSuccess={() => fetchBlocks(currentDate)}
+      />
     </div>
   )
 }

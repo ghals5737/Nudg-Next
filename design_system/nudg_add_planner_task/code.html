@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Task Modal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e1eae8",
+                        "tertiary-dim": "#28596d",
+                        "outline": "#727d7b",
+                        "on-tertiary-fixed": "#0a4356",
+                        "on-primary-container": "#00534d",
+                        "surface-container-highest": "#d9e5e2",
+                        "secondary-dim": "#3f5855",
+                        "surface-tint": "#006b64",
+                        "surface-dim": "#d1dcda",
+                        "surface-bright": "#f6faf8",
+                        "on-error-container": "#6e0a12",
+                        "on-surface": "#2a3433",
+                        "tertiary-fixed": "#b7e7ff",
+                        "secondary-fixed": "#cce8e4",
+                        "on-secondary-container": "#3d5653",
+                        "surface-container-low": "#eef5f3",
+                        "tertiary-container": "#b7e7ff",
+                        "secondary-fixed-dim": "#bedad6",
+                        "inverse-primary": "#7fe6db",
+                        "primary-dim": "#005e57",
+                        "on-tertiary-container": "#24566a",
+                        "surface": "#f6faf8",
+                        "primary": "#006b64",
+                        "tertiary-fixed-dim": "#a9d8f0",
+                        "surface-variant": "#d9e5e2",
+                        "tertiary": "#356579",
+                        "inverse-on-surface": "#999e9c",
+                        "error": "#a83836",
+                        "on-primary": "#e2fffa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#f3faff",
+                        "secondary": "#4a6461",
+                        "outline-variant": "#a9b4b2",
+                        "error-container": "#fa746f",
+                        "inverse-surface": "#0a0f0e",
+                        "on-background": "#2a3433",
+                        "background": "#f6faf8",
+                        "on-tertiary-fixed-variant": "#2f5f74",
+                        "primary-fixed-dim": "#71d7cd",
+                        "on-surface-variant": "#56615f",
+                        "on-secondary-fixed": "#2b4441",
+                        "surface-container": "#e7f0ed",
+                        "on-primary-fixed-variant": "#005d57",
+                        "secondary-container": "#cce8e4",
+                        "on-secondary-fixed-variant": "#47605d",
+                        "primary-fixed": "#7fe6db",
+                        "on-error": "#fff7f6",
+                        "primary-container": "#7fe6db",
+                        "on-primary-fixed": "#003e39",
+                        "error-dim": "#67040d",
+                        "on-secondary": "#e2fffa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-gradient { background: linear-gradient(135deg, #006b64 0%, #7fe6db 100%); }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface min-h-screen relative overflow-hidden font-body flex items-center justify-center p-4 md:p-8">
+<!-- Blurred Background Context -->
+<div class="absolute inset-0 z-0 bg-[url('image-planner-bg')] bg-cover bg-center filter blur-xl opacity-60 pointer-events-none" data-alt="A softly focused, minimalist digital planner interface with gentle pastel columns and subtle calendar grids, washed out for background texture"></div>
+<div class="absolute inset-0 z-0 bg-surface/50 pointer-events-none"></div>
+<!-- Modal Container -->
+<main class="relative z-10 w-full max-w-2xl bg-surface-container-lowest/90 backdrop-blur-3xl rounded-xl shadow-[0px_12px_32px_rgba(42,52,51,0.06)] p-8 md:p-12 border border-outline-variant/15 flex flex-col gap-10">
+<!-- Header -->
+<header class="flex justify-between items-center">
+<div>
+<h1 class="text-3xl font-bold tracking-tight text-on-surface font-headline">New Task</h1>
+<p class="text-on-surface-variant mt-2 text-sm">Add a focused session to your day.</p>
+</div>
+<button aria-label="Close modal" class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors duration-400">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<form class="flex flex-col gap-10">
+<!-- Task Name Input -->
+<section class="flex flex-col gap-4">
+<label class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider" for="task-name">What needs focus?</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low/50 text-2xl md:text-4xl font-headline font-semibold text-on-surface placeholder:text-outline-variant/60 rounded-lg p-6 outline-none focus:ring-2 focus:ring-primary/20 transition-all border-none shadow-none" id="task-name" placeholder="e.g. Design System Review" type="text"/>
+</div>
+</section>
+<!-- Duration Selector -->
+<section class="flex flex-col gap-4">
+<label class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+                    Duration
+                </label>
+<div class="flex flex-wrap gap-4">
+<label class="cursor-pointer group relative">
+<input class="peer sr-only" name="duration" type="radio" value="15"/>
+<div class="px-6 py-4 rounded-lg bg-surface-container-low text-on-surface-variant peer-checked:bg-secondary-container peer-checked:text-on-secondary-container transition-colors duration-400 font-semibold text-lg hover:bg-surface-variant">
+                            15m
+                        </div>
+</label>
+<label class="cursor-pointer group relative">
+<input checked="" class="peer sr-only" name="duration" type="radio" value="30"/>
+<div class="px-6 py-4 rounded-lg bg-surface-container-low text-on-surface-variant peer-checked:bg-secondary-container peer-checked:text-on-secondary-container transition-colors duration-400 font-semibold text-lg hover:bg-surface-variant">
+                            30m
+                        </div>
+</label>
+<label class="cursor-pointer group relative">
+<input class="peer sr-only" name="duration" type="radio" value="60"/>
+<div class="px-6 py-4 rounded-lg bg-surface-container-low text-on-surface-variant peer-checked:bg-secondary-container peer-checked:text-on-secondary-container transition-colors duration-400 font-semibold text-lg hover:bg-surface-variant">
+                            1h
+                        </div>
+</label>
+<label class="cursor-pointer group relative flex-1 min-w-[100px]">
+<div class="h-full px-6 py-4 rounded-lg border-2 border-dashed border-outline-variant/30 text-on-surface-variant flex items-center justify-center gap-2 hover:border-outline-variant/60 transition-colors duration-400 cursor-text">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 w-16 text-center placeholder:text-on-surface-variant/50 font-semibold text-lg outline-none" placeholder="Custom" type="text"/>
+</div>
+</label>
+</div>
+</section>
+<!-- Quick Tags -->
+<section class="flex flex-col gap-4">
+<label class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">sell</span>
+                    Quick Tags
+                </label>
+<div class="flex flex-wrap gap-3">
+<button class="px-5 py-2.5 rounded-full bg-tertiary-container/50 text-on-tertiary-container hover:bg-tertiary-container transition-colors duration-400 font-medium text-sm border border-tertiary-container" type="button">Work</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-variant transition-colors duration-400 font-medium text-sm" type="button">Personal</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-variant transition-colors duration-400 font-medium text-sm" type="button">Errands</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-variant transition-colors duration-400 font-medium text-sm flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                        New Tag
+                    </button>
+</div>
+</section>
+<!-- Actions -->
+<div class="flex justify-end gap-4 mt-4 pt-8 border-t border-surface-container-highest">
+<button class="px-8 py-4 rounded-xl text-on-surface-variant font-semibold hover:bg-surface-container-high transition-colors duration-400" type="button">
+                    Cancel
+                </button>
+<button class="glass-gradient px-10 py-4 rounded-xl text-on-primary font-bold text-lg hover:opacity-90 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] transition-all duration-400" type="submit">
+                    Add Task
+                </button>
+</div>
+</form>
+</main>
+</body></html>

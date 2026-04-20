@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudg - Routines</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#2b4441",
+                        "tertiary-dim": "#28596d",
+                        "on-tertiary": "#f3faff",
+                        "surface-variant": "#d9e5e2",
+                        "tertiary": "#356579",
+                        "surface": "#f6faf8",
+                        "on-tertiary-fixed-variant": "#2f5f74",
+                        "inverse-primary": "#7fe6db",
+                        "surface-container": "#e7f0ed",
+                        "primary-fixed-dim": "#71d7cd",
+                        "on-secondary-container": "#3d5653",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-dim": "#3f5855",
+                        "outline": "#727d7b",
+                        "surface-container-high": "#e1eae8",
+                        "on-error-container": "#6e0a12",
+                        "inverse-surface": "#0a0f0e",
+                        "error": "#a83836",
+                        "background": "#f6faf8",
+                        "on-primary-fixed-variant": "#005d57",
+                        "primary-dim": "#005e57",
+                        "on-primary-fixed": "#003e39",
+                        "secondary": "#4a6461",
+                        "secondary-fixed-dim": "#bedad6",
+                        "on-surface-variant": "#56615f",
+                        "primary": "#006b64",
+                        "inverse-on-surface": "#999e9c",
+                        "tertiary-fixed-dim": "#a9d8f0",
+                        "error-container": "#fa746f",
+                        "on-primary": "#e2fffa",
+                        "surface-tint": "#006b64",
+                        "error-dim": "#67040d",
+                        "tertiary-fixed": "#b7e7ff",
+                        "secondary-fixed": "#cce8e4",
+                        "outline-variant": "#a9b4b2",
+                        "on-error": "#fff7f6",
+                        "surface-container-low": "#eef5f3",
+                        "surface-bright": "#f6faf8",
+                        "on-background": "#2a3433",
+                        "primary-fixed": "#7fe6db",
+                        "on-primary-container": "#00534d",
+                        "surface-container-highest": "#d9e5e2",
+                        "on-tertiary-fixed": "#0a4356",
+                        "on-tertiary-container": "#24566a",
+                        "primary-container": "#7fe6db",
+                        "on-secondary": "#e2fffa",
+                        "secondary-container": "#cce8e4",
+                        "surface-dim": "#d1dcda",
+                        "tertiary-container": "#b7e7ff",
+                        "on-secondary-fixed-variant": "#47605d",
+                        "on-surface": "#2a3433"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background font-body text-on-surface antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Shared Component) -->
+<nav class="fixed left-0 top-0 h-screen w-72 flex flex-col py-8 px-4 rounded-r-[3rem] bg-teal-50/70 backdrop-blur-3xl shadow-[0px_12px_32px_rgba(42,52,51,0.06)] z-50 transition-transform duration-500 hidden md:flex font-plus-jakarta-sans antialiased tracking-tight">
+<!-- Header -->
+<div class="flex items-center gap-4 px-6 mb-12">
+<div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-sm overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up portrait of a calm young woman looking serene with soft natural lighting and a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMGYURNXSBRdzVISqdalZGm0DE0JkPYV3fdkvJtmvkwmNJ9VILbUgdO9qjy8RHG_pTZhWg2mT2NSezb_qYmk3lAXvj3g3cwUMPv9lDaqzLFqpCXh2osnqONccnVFfWVUpRRP-UKTYzan3m5SBr2XvXXlecS5FFX4deb8J-v0QKgSIAHeOBMD_gsdbY2TNdyLU9ARKLbOV6bVZZvHWVSbNeMVeaEZWbg_BgL2kX6O48mBYHwwyzUQrNjqOIYJPGJ78PnDxPrPgPU8s"/>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tighter text-teal-700">Nudg</h1>
+<p class="text-xs font-medium text-teal-600/70 tracking-wide uppercase">The Cognitive Sanctuary</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 space-y-2">
+<a class="flex items-center gap-4 text-slate-500 px-6 py-3 hover:text-teal-600 hover:bg-white/40 transition-all duration-400 ease-out rounded-full glide-in active:scale-95 group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform duration-300">home</span>
+<span class="font-medium">Home</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 px-6 py-3 hover:text-teal-600 hover:bg-white/40 transition-all duration-400 ease-out rounded-full glide-in active:scale-95 group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform duration-300">calendar_today</span>
+<span class="font-medium">Planner</span>
+</a>
+<!-- Active Tab: Routines -->
+<a class="flex items-center gap-4 bg-white/50 text-teal-800 rounded-full px-6 py-3 font-semibold glide-in active:scale-95 shadow-sm group" href="#">
+<span class="material-symbols-outlined text-xl text-primary" style="font-variation-settings: 'FILL' 1;">cached</span>
+<span>Routines</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 px-6 py-3 hover:text-teal-600 hover:bg-white/40 transition-all duration-400 ease-out rounded-full glide-in active:scale-95 group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform duration-300">flag</span>
+<span class="font-medium">Goals</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 px-6 py-3 hover:text-teal-600 hover:bg-white/40 transition-all duration-400 ease-out rounded-full glide-in active:scale-95 group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform duration-300">psychology</span>
+<span class="font-medium">CBT</span>
+</a>
+</div>
+<!-- Bottom Actions -->
+<div class="mt-auto space-y-4 px-2">
+<a class="flex items-center gap-4 text-slate-500 px-4 py-3 hover:text-teal-600 hover:bg-white/40 transition-all duration-400 ease-out rounded-full group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:rotate-45 transition-transform duration-300">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+<button class="w-full py-4 rounded-[2rem] bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold tracking-wide shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-400 ease-out flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">add</span>
+                New Entry
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-h-screen md:ml-72 relative w-full max-w-6xl mx-auto">
+<!-- TopNavBar (Shared Component) -->
+<header class="flex justify-end items-center w-full max-w-7xl ml-auto px-8 pt-6 pb-4 bg-transparent font-plus-jakarta-sans text-body-lg soft-fade-in z-40 relative">
+<div class="flex items-center gap-6">
+<button class="text-slate-400 hover:text-teal-600 hover:opacity-80 transition-all duration-400 relative">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+<span class="absolute top-0 right-0 w-2.5 h-2.5 bg-error rounded-full border-2 border-background"></span>
+</button>
+<button class="text-slate-400 hover:text-teal-600 hover:opacity-80 transition-all duration-400">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<div class="px-8 pb-24 pt-8 flex-1 flex flex-col max-w-5xl mx-auto w-full">
+<!-- Header Section -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-xl">
+<h2 class="text-[2.5rem] leading-tight font-headline font-bold text-on-surface tracking-tight mb-3">Your Routines</h2>
+<p class="text-lg text-on-surface-variant leading-relaxed">Establish gentle rhythms. Toggle routines to activate them in your daily planner.</p>
+</div>
+<button class="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors duration-400 font-semibold shadow-sm">
+<span class="material-symbols-outlined text-lg">tune</span>
+                    Filter
+                </button>
+</div>
+<!-- Routines Container -->
+<div class="space-y-6">
+<!-- Routine Card 1 (Active) -->
+<div class="group bg-surface-container-lowest rounded-xl p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8 transition-all duration-400 ease-out hover:shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:-translate-y-1 relative overflow-hidden">
+<!-- Subtle active indicator line -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary rounded-l-xl opacity-100 transition-opacity"></div>
+<!-- Info Section -->
+<div class="flex items-start gap-5 flex-1 min-w-[250px]">
+<div class="w-14 h-14 shrink-0 rounded-full bg-secondary-container flex items-center justify-center text-primary transition-transform duration-500 group-hover:scale-105">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">self_improvement</span>
+</div>
+<div class="pt-1">
+<h3 class="text-xl font-headline font-bold text-on-surface tracking-tight mb-1">Morning Meditation</h3>
+<p class="text-sm text-on-surface-variant line-clamp-2">15 minutes of guided mindfulness before checking devices.</p>
+</div>
+</div>
+<!-- Functional Section (Days & Streak) -->
+<div class="flex flex-wrap items-center gap-10 lg:gap-14 flex-shrink-0 ml-19 lg:ml-0">
+<!-- Scheduled Days -->
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold tracking-wider uppercase text-on-surface-variant/70 pl-1">Schedule</span>
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">M</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">T</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">W</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">T</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">F</div>
+<div class="w-8 h-8 rounded-full bg-surface text-on-surface-variant flex items-center justify-center text-sm font-medium">S</div>
+<div class="w-8 h-8 rounded-full bg-surface text-on-surface-variant flex items-center justify-center text-sm font-medium">S</div>
+</div>
+</div>
+<!-- 7-Day Streak -->
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold tracking-wider uppercase text-on-surface-variant/70 pl-1">7-Day Rhythm</span>
+<div class="flex gap-2 items-center h-8">
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant/30 ring-1 ring-outline-variant/50"></div>
+</div>
+</div>
+</div>
+<!-- Toggle Action -->
+<div class="absolute right-6 top-6 lg:relative lg:right-0 lg:top-0">
+<label class="relative inline-flex items-center cursor-pointer group/toggle">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-14 h-8 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-surface-container-lowest after:border-outline-variant after:border-opacity-20 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-sm peer-checked:bg-primary group-hover/toggle:opacity-90"></div>
+</label>
+</div>
+</div>
+<!-- Routine Card 2 (Active) -->
+<div class="group bg-surface-container-lowest rounded-xl p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8 transition-all duration-400 ease-out hover:shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary rounded-l-xl opacity-100 transition-opacity"></div>
+<div class="flex items-start gap-5 flex-1 min-w-[250px]">
+<div class="w-14 h-14 shrink-0 rounded-full bg-tertiary-container flex items-center justify-center text-tertiary transition-transform duration-500 group-hover:scale-105">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+<div class="pt-1">
+<h3 class="text-xl font-headline font-bold text-on-surface tracking-tight mb-1">Hydration Baseline</h3>
+<p class="text-sm text-on-surface-variant line-clamp-2">Drink 2L of water throughout the workday.</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-10 lg:gap-14 flex-shrink-0 ml-19 lg:ml-0">
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold tracking-wider uppercase text-on-surface-variant/70 pl-1">Schedule</span>
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">M</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">T</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">W</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">T</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">F</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">S</div>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold shadow-sm">S</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold tracking-wider uppercase text-on-surface-variant/70 pl-1">7-Day Rhythm</span>
+<div class="flex gap-2 items-center h-8">
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm"></div>
+</div>
+</div>
+</div>
+<div class="absolute right-6 top-6 lg:relative lg:right-0 lg:top-0">
+<label class="relative inline-flex items-center cursor-pointer group/toggle">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-14 h-8 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-surface-container-lowest after:border-outline-variant after:border-opacity-20 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-sm peer-checked:bg-primary group-hover/toggle:opacity-90"></div>
+</label>
+</div>
+</div>
+<!-- Routine Card 3 (Inactive) -->
+<div class="group bg-surface-container-low rounded-xl p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8 transition-all duration-400 ease-out hover:bg-surface-container-lowest hover:shadow-[0px_12px_32px_rgba(42,52,51,0.06)] relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-surface-variant rounded-l-xl transition-colors group-hover:bg-outline-variant/50"></div>
+<div class="flex items-start gap-5 flex-1 min-w-[250px] opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+<div class="w-14 h-14 shrink-0 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-3xl">menu_book</span>
+</div>
+<div class="pt-1">
+<h3 class="text-xl font-headline font-semibold text-on-surface tracking-tight mb-1">Evening Reading</h3>
+<p class="text-sm text-on-surface-variant line-clamp-2">Read 20 pages of fiction before sleep.</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-10 lg:gap-14 flex-shrink-0 ml-19 lg:ml-0 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold tracking-wider uppercase text-on-surface-variant/70 pl-1">Schedule</span>
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-sm font-medium">M</div>
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-sm font-medium">T</div>
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-sm font-medium">W</div>
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-sm font-medium">T</div>
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-sm font-medium">F</div>
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-sm font-medium">S</div>
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-sm font-medium">S</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold tracking-wider uppercase text-on-surface-variant/70 pl-1">7-Day Rhythm</span>
+<div class="flex gap-2 items-center h-8">
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant/30 ring-1 ring-outline-variant/50"></div>
+</div>
+</div>
+</div>
+<div class="absolute right-6 top-6 lg:relative lg:right-0 lg:top-0">
+<label class="relative inline-flex items-center cursor-pointer group/toggle">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-14 h-8 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-surface-container-lowest after:border-outline-variant after:border-opacity-20 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-sm peer-checked:bg-primary group-hover/toggle:opacity-90"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Bottom Spacer for breathing room -->
+<div class="h-12"></div>
+</div>
+</main>
+</body></html>

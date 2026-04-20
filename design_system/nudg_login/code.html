@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudg - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#b7e7ff",
+                        "tertiary": "#356579",
+                        "on-secondary-fixed-variant": "#47605d",
+                        "on-surface": "#2a3433",
+                        "surface-container-highest": "#d9e5e2",
+                        "surface": "#f6faf8",
+                        "secondary-fixed": "#cce8e4",
+                        "on-primary-container": "#00534d",
+                        "on-error-container": "#6e0a12",
+                        "inverse-primary": "#7fe6db",
+                        "primary-dim": "#005e57",
+                        "secondary-fixed-dim": "#bedad6",
+                        "secondary": "#4a6461",
+                        "inverse-surface": "#0a0f0e",
+                        "surface-bright": "#f6faf8",
+                        "surface-dim": "#d1dcda",
+                        "error-dim": "#67040d",
+                        "on-error": "#fff7f6",
+                        "tertiary-dim": "#28596d",
+                        "surface-tint": "#006b64",
+                        "on-background": "#2a3433",
+                        "secondary-dim": "#3f5855",
+                        "on-secondary": "#e2fffa",
+                        "on-surface-variant": "#56615f",
+                        "primary-fixed-dim": "#71d7cd",
+                        "secondary-container": "#cce8e4",
+                        "on-tertiary": "#f3faff",
+                        "outline-variant": "#a9b4b2",
+                        "primary": "#006b64",
+                        "tertiary-container": "#b7e7ff",
+                        "surface-container": "#e7f0ed",
+                        "on-tertiary-container": "#24566a",
+                        "surface-container-high": "#e1eae8",
+                        "inverse-on-surface": "#999e9c",
+                        "primary-fixed": "#7fe6db",
+                        "primary-container": "#7fe6db",
+                        "outline": "#727d7b",
+                        "on-primary": "#e2fffa",
+                        "surface-container-low": "#eef5f3",
+                        "background": "#f6faf8",
+                        "on-secondary-container": "#3d5653",
+                        "error": "#a83836",
+                        "on-primary-fixed": "#003e39",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#0a4356",
+                        "tertiary-fixed-dim": "#a9d8f0",
+                        "on-secondary-fixed": "#2b4441",
+                        "on-primary-fixed-variant": "#005d57",
+                        "error-container": "#fa746f",
+                        "on-tertiary-fixed-variant": "#2f5f74",
+                        "surface-variant": "#d9e5e2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 antialiased font-body relative overflow-hidden bg-background">
+<!-- Ambient background element for soft texture -->
+<div aria-hidden="true" class="absolute inset-0 z-0 bg-surface-container-low opacity-50 blur-[100px] rounded-full transform scale-150"></div>
+<main class="w-full max-w-md relative z-10 flex flex-col items-center gap-12">
+<!-- Brand / Identity -->
+<div class="text-center space-y-4">
+<h1 class="font-headline font-extrabold text-5xl tracking-tight text-primary italic">Nudg</h1>
+<p class="font-body text-lg text-on-surface-variant leading-relaxed">Focus on what matters.</p>
+</div>
+<!-- Authentication Container -->
+<div class="w-full space-y-6">
+<!-- Social Login Buttons Container -->
+<div class="flex flex-col gap-4 w-full">
+<!-- Google Login -->
+<button class="w-full flex items-center justify-center gap-3 bg-surface-container-lowest text-on-surface py-4 px-6 rounded-xl hover:bg-surface-container-high transition-colors duration-400 ease-out font-medium text-lg relative" style="box-shadow: 0px 12px 32px rgba(42, 52, 51, 0.06);">
+<img alt="Google logo" class="w-6 h-6 object-contain rounded-full" data-alt="Small colorful google G logo icon isolated on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3hWP-kvGm3GlzNYb3zN7V4C3KDGstdMBMkD49nNSB95BRkH4a9cahoO4PJqyyMADKPzp8_VH08JxYYKsOUtRnmV8F2y7rbue7Pf0XpSM-qvd1Z7eOWFmJUMtR6C9EPFEtBHT2YgVQ4qXrAkbRuflmF4WLepK0hQV1LGd4RdKp_W-ZW2Ezdpz5uIJBgdpAW-n0Fl8PyZUOnNQlp0T3HCrOIORV1OrvWAq89UV06p1UI3Dnb8A4PeRx4dC-vxKhUPuSPAWYaWHT8LI"/>
+<span>Continue with Google</span>
+</button>
+<!-- Apple Login -->
+<button class="w-full flex items-center justify-center gap-3 bg-on-surface text-surface py-4 px-6 rounded-xl hover:bg-on-background/90 transition-colors duration-400 ease-out font-medium text-lg relative" style="box-shadow: 0px 12px 32px rgba(42, 52, 51, 0.06);">
+<span class="material-symbols-outlined text-2xl" data-icon="apple">ios</span>
+<span>Continue with Apple</span>
+</button>
+</div>
+<!-- Optional: Alternative action, kept minimal -->
+<div class="text-center pt-8">
+<a class="text-sm font-label text-on-surface-variant hover:text-primary transition-colors duration-400" href="#">Having trouble? Get help.</a>
+</div>
+</div>
+</main>
+</body></html>

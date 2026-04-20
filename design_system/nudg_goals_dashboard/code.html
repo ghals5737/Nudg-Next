@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudg - Goals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#b7e7ff",
+                    "tertiary": "#356579",
+                    "on-secondary-fixed-variant": "#47605d",
+                    "on-surface": "#2a3433",
+                    "surface-container-highest": "#d9e5e2",
+                    "surface": "#f6faf8",
+                    "secondary-fixed": "#cce8e4",
+                    "on-primary-container": "#00534d",
+                    "on-error-container": "#6e0a12",
+                    "inverse-primary": "#7fe6db",
+                    "primary-dim": "#005e57",
+                    "secondary-fixed-dim": "#bedad6",
+                    "secondary": "#4a6461",
+                    "inverse-surface": "#0a0f0e",
+                    "surface-bright": "#f6faf8",
+                    "surface-dim": "#d1dcda",
+                    "error-dim": "#67040d",
+                    "on-error": "#fff7f6",
+                    "tertiary-dim": "#28596d",
+                    "surface-tint": "#006b64",
+                    "on-background": "#2a3433",
+                    "secondary-dim": "#3f5855",
+                    "on-secondary": "#e2fffa",
+                    "on-surface-variant": "#56615f",
+                    "primary-fixed-dim": "#71d7cd",
+                    "secondary-container": "#cce8e4",
+                    "on-tertiary": "#f3faff",
+                    "outline-variant": "#a9b4b2",
+                    "primary": "#006b64",
+                    "tertiary-container": "#b7e7ff",
+                    "surface-container": "#e7f0ed",
+                    "on-tertiary-container": "#24566a",
+                    "surface-container-high": "#e1eae8",
+                    "inverse-on-surface": "#999e9c",
+                    "primary-fixed": "#7fe6db",
+                    "primary-container": "#7fe6db",
+                    "outline": "#727d7b",
+                    "on-primary": "#e2fffa",
+                    "surface-container-low": "#eef5f3",
+                    "background": "#f6faf8",
+                    "on-secondary-container": "#3d5653",
+                    "error": "#a83836",
+                    "on-primary-fixed": "#003e39",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#0a4356",
+                    "tertiary-fixed-dim": "#a9d8f0",
+                    "on-secondary-fixed": "#2b4441",
+                    "on-primary-fixed-variant": "#005d57",
+                    "error-container": "#fa746f",
+                    "on-tertiary-fixed-variant": "#2f5f74",
+                    "surface-variant": "#d9e5e2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label": [
+                            "Plus Jakarta Sans"
+                    ]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased flex">
+<!-- SideNavBar (WEB) -->
+<nav class="hidden md:flex bg-[#eef5f3] dark:bg-[#1e2120] text-[#4DB6AC] dark:text-[#7fe6db] font-['Plus_Jakarta_Sans'] leading-relaxed rounded-r-[3rem] h-full fixed left-0 top-0 h-screen w-64 flex-col p-4 z-50">
+<div class="flex items-center gap-3 mb-10 px-4 pt-4">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">spa</span>
+<div>
+<h1 class="text-xl font-extrabold tracking-tighter text-[#006b64]">Nudg</h1>
+<p class="text-xs text-on-surface-variant">Cognitive Sanctuary</p>
+</div>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center gap-4 px-5 py-4 text-[#506360] dark:text-[#bec9c6] hover:bg-[#d9e5e2] dark:hover:bg-[#323b39] transition-colors duration-400 rounded-[2rem]" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="font-medium">Home</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-5 py-4 text-[#506360] dark:text-[#bec9c6] hover:bg-[#d9e5e2] dark:hover:bg-[#323b39] transition-colors duration-400 rounded-[2rem]" href="#">
+<span class="material-symbols-outlined text-2xl">calendar_today</span>
+<span class="font-medium">Planner</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-5 py-4 text-[#506360] dark:text-[#bec9c6] hover:bg-[#d9e5e2] dark:hover:bg-[#323b39] transition-colors duration-400 rounded-[2rem]" href="#">
+<span class="material-symbols-outlined text-2xl">repeat</span>
+<span class="font-medium">Routines</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-5 py-4 bg-[#ffffff] dark:bg-[#2a3433] text-[#006b64] dark:text-[#7fe6db] rounded-[2rem] shadow-sm scale-[0.97] transition-transform" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">track_changes</span>
+<span class="font-bold">Goals</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-5 py-4 text-[#506360] dark:text-[#bec9c6] hover:bg-[#d9e5e2] dark:hover:bg-[#323b39] transition-colors duration-400 rounded-[2rem]" href="#">
+<span class="material-symbols-outlined text-2xl">psychology</span>
+<span class="font-medium">CBT</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-5 py-4 text-[#506360] dark:text-[#bec9c6] hover:bg-[#d9e5e2] dark:hover:bg-[#323b39] transition-colors duration-400 rounded-[2rem]" href="#">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto pt-6">
+<button class="w-full py-4 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:brightness-105 transition-all duration-400">
+                Focus Mode
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 min-h-screen pt-24 md:pt-12 px-6 md:px-12 pb-24 max-w-7xl mx-auto">
+<!-- TopNavBar (MOBILE) -->
+<header class="md:hidden fixed top-0 left-0 w-full bg-[#f6faf8]/70 dark:bg-[#1a1c1b]/70 backdrop-blur-3xl z-40 flex justify-between items-center px-6 py-4 glide-in fade transition-all">
+<div class="text-2xl font-bold italic text-[#006b64] dark:text-[#7fe6db]">Nudg</div>
+<div class="flex gap-4">
+<button class="text-[#4DB6AC] dark:text-[#7fe6db] hover:bg-[#eef5f3] dark:hover:bg-[#2d3231] p-2 rounded-full transition-all duration-400 ease-out">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+<button class="text-[#4DB6AC] dark:text-[#7fe6db] hover:bg-[#eef5f3] dark:hover:bg-[#2d3231] p-2 rounded-full transition-all duration-400 ease-out">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Page Header -->
+<header class="mb-12 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+<div>
+<h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2">Long-term Vision</h2>
+<p class="text-lg text-on-surface-variant font-medium max-w-lg">Nurture your grand designs. Steady progress over sudden bursts.</p>
+</div>
+<button class="self-start md:self-auto bg-surface-container-lowest text-primary px-6 py-4 rounded-xl font-bold flex items-center gap-2 hover:bg-surface-container-high transition-colors duration-400 shadow-[0px_12px_32px_rgba(42,52,51,0.06)]">
+<span class="material-symbols-outlined">add</span>
+                New Goal
+            </button>
+</header>
+<!-- Summary & Bento Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Overall Progress Card -->
+<section class="lg:col-span-5 bg-surface-container-lowest rounded-[3rem] p-8 md:p-10 flex flex-col items-center justify-center relative overflow-hidden shadow-[0px_12px_32px_rgba(42,52,51,0.06)]">
+<div class="absolute inset-0 bg-gradient-to-br from-tertiary-container/30 to-surface opacity-50"></div>
+<h3 class="text-xl font-bold text-on-surface z-10 self-start w-full mb-8">Overall Progress</h3>
+<div class="relative w-48 h-48 mb-6 z-10 flex items-center justify-center">
+<!-- Decorative Soft Ring -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container-high" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary opacity-80" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="283" stroke-dashoffset="113" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-4xl font-extrabold text-primary">60%</span>
+<span class="text-sm text-on-surface-variant font-medium">milestones</span>
+</div>
+</div>
+<p class="text-center text-on-surface-variant font-medium z-10">You're making consistent waves across 4 active visions.</p>
+</section>
+<!-- Active Goals List -->
+<section class="lg:col-span-7 flex flex-col gap-6">
+<!-- Goal Card 1 -->
+<article class="bg-surface-container-low rounded-lg p-6 md:p-8 hover:bg-surface-container transition-colors duration-400 group cursor-pointer">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+</div>
+<div>
+<h4 class="text-2xl font-bold text-on-surface">Build a Reading Habit</h4>
+<p class="text-on-surface-variant font-medium mt-1">24 of 50 books read</p>
+</div>
+</div>
+<span class="text-primary font-bold bg-surface rounded-full px-4 py-2 text-sm hidden sm:block group-hover:bg-surface-container-lowest transition-colors">48%</span>
+</div>
+<!-- Large Progress Bar -->
+<div class="w-full bg-surface h-4 rounded-full overflow-hidden mb-6">
+<div class="bg-gradient-to-r from-primary to-primary-container h-full rounded-full w-[48%]"></div>
+</div>
+<!-- Sub-steps preview -->
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-lg text-primary">check_circle</span>
+                            Dune Messiah
+                        </span>
+<span class="bg-surface text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-lg">radio_button_unchecked</span>
+                            Children of Dune
+                        </span>
+</div>
+</article>
+<!-- Goal Card 2 -->
+<article class="bg-surface-container-low rounded-lg p-6 md:p-8 hover:bg-surface-container transition-colors duration-400 group cursor-pointer">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<div>
+<h4 class="text-2xl font-bold text-on-surface">Launch Project X</h4>
+<p class="text-on-surface-variant font-medium mt-1">Phase 2 of 4</p>
+</div>
+</div>
+<span class="text-tertiary font-bold bg-surface rounded-full px-4 py-2 text-sm hidden sm:block group-hover:bg-surface-container-lowest transition-colors">75%</span>
+</div>
+<!-- Large Progress Bar -->
+<div class="w-full bg-surface h-4 rounded-full overflow-hidden mb-6">
+<div class="bg-gradient-to-r from-tertiary to-tertiary-container h-full rounded-full w-[75%]"></div>
+</div>
+<!-- Sub-steps preview -->
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-lg text-tertiary">check_circle</span>
+                            User Research
+                        </span>
+<span class="bg-surface text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-lg">radio_button_unchecked</span>
+                            Final Polish
+                        </span>
+</div>
+</article>
+</section>
+</div>
+</main>
+<!-- Mobile Bottom NavBar Fallback -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-[#f6faf8]/90 backdrop-blur-xl z-50 px-6 py-4 pb-safe flex justify-between items-center shadow-[0px_-12px_32px_rgba(42,52,51,0.04)]">
+<a class="text-[#506360] flex flex-col items-center gap-1 p-2" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="text-[#506360] flex flex-col items-center gap-1 p-2" href="#">
+<span class="material-symbols-outlined text-2xl">calendar_today</span>
+<span class="text-[10px] font-medium">Planner</span>
+</a>
+<a class="text-[#006b64] font-bold flex flex-col items-center gap-1 p-2" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">track_changes</span>
+<span class="text-[10px]">Goals</span>
+</a>
+<a class="text-[#506360] flex flex-col items-center gap-1 p-2" href="#">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<span class="text-[10px] font-medium">Settings</span>
+</a>
+</nav>
+</body></html>
