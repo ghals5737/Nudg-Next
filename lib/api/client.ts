@@ -46,6 +46,11 @@ class ApiClient {
     const res = await fetch(`${this.baseUrl}${path}`, { ...init, headers })
 
     if (!res.ok) {
+      if (res.status === 401) {
+        this.clearToken()
+        window.location.href = "/login"
+        throw new Error("Unauthorized")
+      }
       const err: ApiError = await res.json().catch(() => ({
         error: "Unknown error",
         statusCode: res.status,
@@ -53,6 +58,8 @@ class ApiClient {
       throw new Error(err.error ?? `Request failed: ${res.status}`)
     }
 
+    const contentType = res.headers.get("content-type")
+    if (!contentType || res.status === 204) return null as T
     return res.json()
   }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { useState } from "react"
 import { goalsApi } from "@/lib/api/goals"
 
@@ -55,7 +55,7 @@ export function NewGoalDialog({ open, onOpenChange, onSuccess }: NewGoalDialogPr
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center gap-3 text-[#006b64]">
               <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <span className="font-bold text-sm tracking-widest text-[#005e57] uppercase">새 목표</span>
+              <DialogTitle className="font-bold text-sm tracking-widest text-[#005e57] uppercase">새 목표</DialogTitle>
             </div>
             <button onClick={handleClose} className="text-[#56615f] hover:text-[#2a3433] transition-colors p-2 rounded-full hover:bg-[#e7f0ed]/50">
               <span className="material-symbols-outlined">close</span>

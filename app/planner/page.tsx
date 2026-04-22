@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { MobileNav } from "@/components/mobile-nav"
 import { NewScheduleDialog } from "@/components/new-schedule-dialog"
+import { EditScheduleDialog } from "@/components/edit-schedule-dialog"
 import { scheduleApi } from "@/lib/api/schedule"
 import type { ScheduleBlock } from "@/types/api"
 
@@ -23,11 +24,26 @@ const toDurationStr = (hours: number) => {
   return `${h}시간 ${m}분`
 }
 
+const toElapsedStr = (seconds: number) => {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  if (h > 0) return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`
+  return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`
+}
+
 export default function PlannerPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([])
   const [loading, setLoading] = useState(true)
   const [showNewScheduleDialog, setShowNewScheduleDialog] = useState(false)
+  const [editingBlock, setEditingBlock] = useState<ScheduleBlock | null>(null)
+
+  // 타이머
+  const [activeBlockId, setActiveBlockId] = useState<string | null>(null)
+  const [elapsed, setElapsed] = useState(0) // seconds
+  const startedAtRef = useRef<number | null>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchBlocks = (date: Date) => {
     setLoading(true)
@@ -38,6 +54,45 @@ export default function PlannerPage() {
   }
 
   useEffect(() => { fetchBlocks(currentDate) }, [currentDate])
+
+  // 타이머 인터벌
+  useEffect(() => {
+    if (activeBlockId) {
+      startedAtRef.current = Date.now()
+      timerRef.current = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - startedAtRef.current!) / 1000))
+      }, 1000)
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current)
+      setElapsed(0)
+    }
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [activeBlockId])
+
+  const handleStart = (block: ScheduleBlock) => {
+    setActiveBlockId(block.id)
+  }
+
+  const handleComplete = async () => {
+    if (!activeBlockId) return
+    const actualDurationHours = elapsed / 3600
+    const plannedDuration = activeBlock?.duration ?? 0
+    await scheduleApi.update(activeBlockId, {
+      status: "completed",
+      duration: elapsed > 60 ? actualDurationHours : plannedDuration,
+    })
+    setActiveBlockId(null)
+    fetchBlocks(currentDate)
+  }
+
+  const handlePause = () => {
+    setActiveBlockId(null)
+  }
+
+  const handleSnooze = async (id: string) => {
+    await scheduleApi.snooze(id, { minutes: 15 })
+    fetchBlocks(currentDate)
+  }
 
   const goTo = (offset: number) => {
     const d = new Date(currentDate)
@@ -50,33 +105,66 @@ export default function PlannerPage() {
     return `${date.getMonth() + 1}월 ${date.getDate()}일 (${weekdays[date.getDay()]})`
   }
 
-  const isToday = () => {
-    const today = new Date()
-    return currentDate.toDateString() === today.toDateString()
-  }
+  const isToday = () => currentDate.toDateString() === new Date().toDateString()
 
   const now = new Date()
-  const currentHour = now.getHours()
-  const hours = Array.from({ length: 16 }, (_, i) => i + 6) // 06:00 ~ 21:00
+  const nowDecimal = now.getHours() + now.getMinutes() / 60
 
-  const handleSnooze = async (id: string) => {
-    await scheduleApi.snooze(id, { minutes: 15 })
-    fetchBlocks(currentDate)
-  }
+  const isCurrentTimeBlock = (block: ScheduleBlock) =>
+    isToday() && nowDecimal >= block.startTime && nowDecimal < block.endTime
 
-  const getBlockForHour = (hour: number) =>
-    blocks.find((b) => hour === Math.floor(b.startTime))
+  const isPastBlock = (block: ScheduleBlock) =>
+    isToday() && block.endTime < nowDecimal
 
-  const isActiveBlock = (block: ScheduleBlock) => {
-    const nowDecimal = now.getHours() + now.getMinutes() / 60
-    return isToday() && nowDecimal >= block.startTime && nowDecimal < block.endTime
-  }
+  const sortedBlocks = [...blocks].sort((a, b) => a.startTime - b.startTime)
+
+  const activeBlock = blocks.find((b) => b.id === activeBlockId) ?? null
+
+  // 진행률 (예상 시간 대비)
+  const progressPercent = activeBlock
+    ? Math.min(100, Math.round((elapsed / (activeBlock.duration * 3600)) * 100))
+    : 0
 
   return (
     <div className="min-h-screen bg-[#f6faf8] text-[#2a3433] flex">
       <AppSidebar />
 
-      <main className="flex-1 md:ml-72 flex flex-col min-h-screen">
+      {/* 활성 타이머 바 */}
+      {activeBlock && (
+        <div className="fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-[#006b64] to-[#7fe6db] text-[#e2fffa] shadow-[0px_4px_16px_rgba(0,107,100,0.2)]">
+          {/* 진행 바 */}
+          <div
+            className="absolute bottom-0 left-0 h-0.5 bg-white/40 transition-all duration-1000"
+            style={{ width: `${progressPercent}%` }}
+          />
+          <div className="flex items-center justify-between px-6 py-3 md:pl-80">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-xl animate-pulse">timer</span>
+              <div>
+                <span className="font-semibold">{activeBlock.title}</span>
+                <span className="ml-3 text-[#e2fffa]/70 text-sm">예상 {toDurationStr(activeBlock.duration)}</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="font-mono text-xl font-bold tabular-nums">{toElapsedStr(elapsed)}</span>
+              <button
+                onClick={handlePause}
+                className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-sm font-medium transition-colors"
+              >
+                일시정지
+              </button>
+              <button
+                onClick={handleComplete}
+                className="px-3 py-1.5 rounded-full bg-white/30 hover:bg-white/40 text-sm font-bold transition-colors"
+              >
+                완료
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <main className={`flex-1 md:ml-72 flex flex-col min-h-screen ${activeBlock ? "pt-[52px]" : ""}`}>
         <header className="hidden md:flex justify-end items-center px-8 pt-6 pb-4">
           <button className="p-2 rounded-full hover:bg-[#eef5f3] transition-colors">
             <span className="material-symbols-outlined text-2xl">notifications</span>
@@ -111,57 +199,140 @@ export default function PlannerPage() {
 
           {loading ? (
             <p className="text-[#56615f]">불러오는 중...</p>
+          ) : sortedBlocks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
+              <span className="material-symbols-outlined text-5xl text-[#a9b4b2]">calendar_today</span>
+              <p className="text-[#56615f] font-medium">등록된 일정이 없어요</p>
+              <button
+                onClick={() => setShowNewScheduleDialog(true)}
+                className="mt-2 flex items-center gap-2 px-6 py-3 rounded-full bg-[#cce8e4] text-[#3d5653] font-semibold hover:bg-[#e1eae8] transition-colors"
+              >
+                <span className="material-symbols-outlined text-sm">add</span>
+                첫 블록 추가하기
+              </button>
+            </div>
           ) : (
-            <div className="space-y-6 relative">
+            <div className="space-y-4 relative">
               <div className="absolute left-[39px] top-4 bottom-4 w-px bg-[#a9b4b2] opacity-15 hidden sm:block" />
-              {hours.map((hour) => {
-                const block = getBlockForHour(hour)
-                const isActive = block ? isActiveBlock(block) : false
-                const isPast = isToday() && hour < currentHour
+              {sortedBlocks.map((block) => {
+                const isActive = block.id === activeBlockId
+                const isCurrentBlock = isCurrentTimeBlock(block)
+                const isPast = isPastBlock(block)
+                const isCompleted = block.status === "completed"
 
                 return (
-                  <div key={hour} className="flex gap-4 sm:gap-8 items-start group">
+                  <div key={block.id} className="flex gap-4 sm:gap-8 items-start group">
                     <div className="hidden sm:flex flex-col items-center min-w-[80px] pt-4">
-                      <span className={`font-bold ${isActive ? "text-[#006b64]" : isPast ? "text-[#a9b4b2]" : "text-[#56615f]"}`}>
-                        {hour.toString().padStart(2, "0")}:00
+                      <span className={`font-bold ${isActive || isCurrentBlock ? "text-[#006b64]" : isPast ? "text-[#a9b4b2]" : "text-[#56615f]"}`}>
+                        {toTimeStr(block.startTime)}
                       </span>
-                      {block && (
-                        <span className="text-xs text-[#56615f] mt-1">{toDurationStr(block.duration)}</span>
-                      )}
+                      <span className="text-xs text-[#56615f] mt-1">{toDurationStr(block.duration)}</span>
                     </div>
 
-                    {block ? (
-                      <div className={`flex-1 rounded-xl p-6 relative overflow-hidden transition-all duration-300 ease-out hover:shadow-[0px_16px_40px_rgba(42,52,51,0.08)] ${
-                        isActive ? "bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.06)]" : "bg-[#eef5f3] hover:bg-[#e7f0ed]"
-                      } ${isPast && !isActive ? "opacity-50" : ""}`}>
-                        {isActive && (
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#006b64] to-[#7fe6db]" />
-                        )}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div>
+                    {(
+                      <div className={`flex-1 rounded-xl p-6 relative overflow-hidden transition-all duration-300 ease-out ${
+                        isCompleted
+                          ? "bg-white opacity-50"
+                          : isActive
+                          ? "bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.1)] ring-2 ring-[#7fe6db]/50"
+                          : isCurrentBlock
+                          ? "bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.06)]"
+                          : "bg-[#eef5f3] hover:bg-[#e7f0ed] hover:shadow-[0px_16px_40px_rgba(42,52,51,0.08)]"
+                      } ${isPast && !isCurrentBlock && !isCompleted ? "opacity-60" : ""}`}>
+
+                        {/* 좌측 상태 표시 바 */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-colors ${
+                          isActive ? "bg-gradient-to-b from-[#006b64] to-[#7fe6db]"
+                          : isCurrentBlock ? "bg-[#006b64]"
+                          : isCompleted ? "bg-[#cce8e4]"
+                          : "bg-transparent"
+                        }`} />
+
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                          <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2 sm:hidden">
-                              <span className={`text-sm font-bold ${isActive ? "text-[#006b64]" : "text-[#56615f]"}`}>{toTimeStr(block.startTime)}</span>
+                              <span className={`text-sm font-bold ${isActive || isCurrentBlock ? "text-[#006b64]" : "text-[#56615f]"}`}>
+                                {toTimeStr(block.startTime)}
+                              </span>
                             </div>
-                            <h3 className="text-lg font-bold text-[#2a3433] mb-1">{block.title}</h3>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className={`text-lg font-bold ${isCompleted ? "line-through text-[#a9b4b2]" : "text-[#2a3433]"}`}>
+                                {block.title}
+                              </h3>
+                              {isCompleted && (
+                                <span className="text-xs bg-[#cce8e4] text-[#3d5653] px-2 py-0.5 rounded-full font-medium">완료</span>
+                              )}
+                            </div>
                             {block.location && (
-                              <p className="text-sm text-[#56615f] flex items-center gap-2">
+                              <p className="text-sm text-[#56615f] flex items-center gap-1 mb-2">
                                 <span className="material-symbols-outlined text-sm">location_on</span>
                                 {block.location}
                               </p>
                             )}
+                            {/* 실제 소요 시간 표시 (완료된 블록) */}
+                            {isCompleted && (
+                              <p className="text-xs text-[#56615f] flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs">schedule</span>
+                                실제 소요: {toDurationStr(block.duration)}
+                              </p>
+                            )}
+                            {/* 진행 중 타이머 표시 */}
+                            {isActive && (
+                              <div className="mt-3">
+                                <div className="flex items-center justify-between text-xs text-[#56615f] mb-1">
+                                  <span>진행 중</span>
+                                  <span>{progressPercent}%</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-[#e1eae8] rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-gradient-to-r from-[#006b64] to-[#7fe6db] rounded-full transition-all duration-1000"
+                                    style={{ width: `${progressPercent}%` }}
+                                  />
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          <button
-                            onClick={() => handleSnooze(block.id)}
-                            className="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full bg-[#eef5f3] text-[#56615f] hover:bg-[#e7f0ed] hover:text-[#2a3433] transition-colors text-sm font-medium"
-                          >
-                            <span className="material-symbols-outlined text-sm">snooze</span>
-                            15분
-                          </button>
+
+                          {/* 액션 버튼 */}
+                          <div className="flex items-center gap-2 flex-shrink-0 self-start">
+                            {!isCompleted && (
+                              <>
+                                {isActive ? (
+                                  <>
+                                    <span className="font-mono text-lg font-bold text-[#006b64] tabular-nums">{toElapsedStr(elapsed)}</span>
+                                    <button
+                                      onClick={handleComplete}
+                                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#006b64] text-[#e2fffa] text-sm font-bold hover:bg-[#005e57] transition-colors"
+                                    >
+                                      <span className="material-symbols-outlined text-sm">check</span>
+                                      완료
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#eef5f3] text-[#56615f] text-sm font-medium">
+                                      <span className="material-symbols-outlined text-sm">timer</span>
+                                      {toDurationStr(block.duration)}
+                                    </span>
+                                    <button
+                                      onClick={() => handleStart(block)}
+                                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] text-sm font-bold hover:opacity-90 transition-opacity"
+                                    >
+                                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+                                      시작
+                                    </button>
+                                  </>
+                                )}
+                              </>
+                            )}
+                            <button
+                              onClick={() => setEditingBlock(block)}
+                              className="w-9 h-9 rounded-full bg-[#eef5f3] text-[#56615f] hover:bg-[#d9e5e2] hover:text-[#2a3433] transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
+                            >
+                              <span className="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex-1 py-4">
-                        <div className="h-px bg-[#e7f0ed]" />
                       </div>
                     )}
                   </div>
@@ -184,6 +355,12 @@ export default function PlannerPage() {
         open={showNewScheduleDialog}
         onOpenChange={setShowNewScheduleDialog}
         date={toDateStr(currentDate)}
+        onSuccess={() => fetchBlocks(currentDate)}
+      />
+      <EditScheduleDialog
+        open={!!editingBlock}
+        onOpenChange={(open) => { if (!open) setEditingBlock(null) }}
+        block={editingBlock}
         onSuccess={() => fetchBlocks(currentDate)}
       />
     </div>

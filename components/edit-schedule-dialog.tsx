@@ -1,14 +1,15 @@
 "use client"
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { scheduleApi } from "@/lib/api/schedule"
+import type { ScheduleBlock } from "@/types/api"
 import { TimePicker } from "@/components/time-picker"
 
-interface NewScheduleDialogProps {
+interface EditScheduleDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  date: string
+  block: ScheduleBlock | null
   onSuccess?: () => void
 }
 
@@ -21,7 +22,20 @@ const durations = [
 
 const quickTags = ["업무", "개인", "심부름", "학습"] as const
 
-export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewScheduleDialogProps) {
+const toHHMM = (decimal: number) => {
+  const h = Math.floor(decimal)
+  const m = Math.round((decimal - h) * 60)
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
+}
+
+const toDecimal = (hhmm: string) => {
+  const [h, m] = hhmm.split(":").map(Number)
+  return h + m / 60
+}
+
+const durationToMin = (hours: number) => Math.round(hours * 60)
+
+export function EditScheduleDialog({ open, onOpenChange, block, onSuccess }: EditScheduleDialogProps) {
   const [title, setTitle] = useState("")
   const [startTime, setStartTime] = useState("09:00")
   const [timePickerOpen, setTimePickerOpen] = useState(false)
@@ -30,38 +44,45 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
   const [selectedTag, setSelectedTag] = useState<string>("업무")
   const [location, setLocation] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!open || !block) return
+    setTitle(block.title)
+    setStartTime(toHHMM(block.startTime))
+    const minVal = durationToMin(block.duration)
+    const preset = durations.find((d) => d.value === minVal && d.value !== 0)
+    if (preset) {
+      setDurationMin(preset.value)
+      setCustomDuration(minVal)
+    } else {
+      setDurationMin(0)
+      setCustomDuration(minVal > 0 ? minVal : 30)
+    }
+    setSelectedTag(block.tag ?? "업무")
+    setLocation(block.location ?? "")
+    setError(null)
+  }, [open, block?.id])
 
   const effectiveDuration = durationMin === 0 ? customDuration : durationMin
 
-  const toDecimal = (hhmm: string) => {
-    const [h, m] = hhmm.split(":").map(Number)
-    return h + m / 60
-  }
-
   const handleClose = () => {
     onOpenChange(false)
-    setTitle("")
-    setStartTime("09:00")
-    setDurationMin(30)
-    setCustomDuration(30)
-    setLocation("")
     setError(null)
   }
 
   const handleSubmit = async () => {
-    if (!title.trim()) return
+    if (!block || !title.trim()) return
     setSubmitting(true)
     setError(null)
     try {
       const start = toDecimal(startTime)
       const durationHours = effectiveDuration / 60
-      const end = start + durationHours
-      await scheduleApi.create({
+      await scheduleApi.update(block.id, {
         title,
-        date,
         startTime: start,
-        endTime: end,
+        endTime: start + durationHours,
         duration: durationHours,
         location: location || undefined,
         tag: selectedTag as "업무" | "개인" | "심부름" | "학습",
@@ -75,13 +96,28 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
     }
   }
 
+  const handleDelete = async () => {
+    if (!block) return
+    setDeleting(true)
+    setError(null)
+    try {
+      await scheduleApi.delete(block.id)
+      handleClose()
+      onSuccess?.()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "삭제 중 오류가 발생했습니다.")
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="bg-white/90 backdrop-blur-3xl sm:max-w-2xl rounded-[2rem] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] p-8 md:p-12 border border-[#a9b4b2]/15 gap-0">
         <div className="flex justify-between items-center mb-10">
           <div>
-            <DialogTitle className="text-3xl font-bold tracking-tight text-[#2a3433]">새 블록</DialogTitle>
-            <p className="text-[#56615f] mt-2 text-sm">집중 세션을 추가하세요.</p>
+            <DialogTitle className="text-3xl font-bold tracking-tight text-[#2a3433]">블록 수정</DialogTitle>
+            <p className="text-[#56615f] mt-2 text-sm">집중 세션을 수정하세요.</p>
           </div>
           <button onClick={handleClose} className="w-12 h-12 rounded-full bg-[#eef5f3] flex items-center justify-center text-[#56615f] hover:bg-[#d9e5e2] transition-colors">
             <span className="material-symbols-outlined">close</span>
@@ -130,7 +166,7 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
             <div className="flex flex-wrap gap-4">
               {durations.map((d) => (
                 <label key={d.value} className="cursor-pointer">
-                  <input type="radio" name="duration" value={d.value} checked={durationMin === d.value} onChange={() => setDurationMin(d.value)} className="sr-only" />
+                  <input type="radio" name="edit-duration" value={d.value} checked={durationMin === d.value} onChange={() => setDurationMin(d.value)} className="sr-only" />
                   <div className={`px-6 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 ${durationMin === d.value ? "bg-[#cce8e4] text-[#3d5653]" : "bg-[#eef5f3] text-[#56615f] hover:bg-[#d9e5e2]"}`}>
                     {d.label}
                   </div>
@@ -190,17 +226,27 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
             </div>
           </section>
 
-          <div className="flex justify-end gap-4 pt-4 border-t border-[#e7f0ed]">
-            <button onClick={handleClose} className="px-8 py-4 rounded-xl text-[#56615f] font-semibold hover:bg-[#eef5f3] transition-colors">
-              취소
-            </button>
+          <div className="flex justify-between gap-4 pt-4 border-t border-[#e7f0ed]">
             <button
-              onClick={handleSubmit}
-              disabled={!title.trim() || submitting}
-              className="px-10 py-4 rounded-xl text-[#e2fffa] font-bold text-lg hover:opacity-90 shadow-sm transition-all bg-gradient-to-br from-[#006b64] to-[#7fe6db] disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleDelete}
+              disabled={deleting || submitting}
+              className="px-6 py-4 rounded-xl text-[#b91c1c] font-semibold hover:bg-[#fef2f2] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {submitting ? "저장 중..." : "블록 추가"}
+              <span className="material-symbols-outlined text-base">delete</span>
+              {deleting ? "삭제 중..." : "삭제"}
             </button>
+            <div className="flex gap-4">
+              <button onClick={handleClose} className="px-8 py-4 rounded-xl text-[#56615f] font-semibold hover:bg-[#eef5f3] transition-colors">
+                취소
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={!title.trim() || submitting || deleting}
+                className="px-10 py-4 rounded-xl text-[#e2fffa] font-bold text-lg hover:opacity-90 shadow-sm transition-all bg-gradient-to-br from-[#006b64] to-[#7fe6db] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? "저장 중..." : "저장"}
+              </button>
+            </div>
           </div>
         </div>
       </DialogContent>

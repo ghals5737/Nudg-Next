@@ -66,9 +66,6 @@ export default function HomePage() {
             <span className="font-semibold">{activeTaskTitle}</span>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={() => handleSnooze(activeTaskId)} className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-sm font-medium transition-colors">
-              15분 미루기
-            </button>
             <button onClick={() => handleComplete(activeTaskId)} className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-sm font-medium transition-colors">
               완료
             </button>
@@ -106,25 +103,32 @@ export default function HomePage() {
               </div>
               {focusTask ? (
                 <>
-                  <h3 className="text-2xl md:text-3xl font-bold text-[#2a3433] tracking-tight">{focusTask.title}</h3>
+                  <h3 className={`text-2xl md:text-3xl font-bold tracking-tight ${focusTask.status === "completed" ? "text-[#a9b4b2] line-through" : "text-[#2a3433]"}`}>
+                    {focusTask.title}
+                  </h3>
                   <p className="text-[#56615f] max-w-md mx-auto md:mx-0">
                     {toTimeStr(focusTask.startTime)} - {toTimeStr(focusTask.endTime)} ({toDurationStr(focusTask.duration)})
                   </p>
-                  <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 justify-center md:justify-start">
-                    <button
-                      className="bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] rounded-xl px-8 py-4 font-bold text-lg flex items-center gap-3 hover:-translate-y-1 transition-all duration-300 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] w-full sm:w-auto justify-center"
-                      onClick={() => setActiveTaskId(focusTask.id)}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
-                      시작
-                    </button>
-                    <button
-                      onClick={() => handleSnooze(focusTask.id)}
-                      className="px-4 py-2 rounded-lg bg-[#eef5f3] text-[#56615f] text-sm font-medium hover:bg-[#e7f0ed] transition-colors"
-                    >
-                      15분 미루기
-                    </button>
-                  </div>
+                  {focusTask.status === "completed" ? (
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#cce8e4] text-[#3d5653] text-sm font-semibold">
+                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                      완료했어요! 수고하셨습니다 🎉
+                    </div>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 justify-center md:justify-start">
+                      <button
+                        className="bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] rounded-xl px-8 py-4 font-bold text-lg flex items-center gap-3 hover:-translate-y-1 transition-all duration-300 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] w-full sm:w-auto justify-center"
+                        onClick={() => setActiveTaskId(focusTask.id)}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+                        시작
+                      </button>
+                      <span className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#eef5f3] text-[#56615f] text-sm font-medium">
+                        <span className="material-symbols-outlined text-sm">timer</span>
+                        {toDurationStr(focusTask.duration)}
+                      </span>
+                    </div>
+                  )}
                 </>
               ) : (
                 <p className="text-xl text-[#56615f]">{loading ? "로딩 중..." : "오늘 예정된 집중 과제가 없어요 🎉"}</p>
@@ -148,26 +152,35 @@ export default function HomePage() {
                 {!loading && data?.todayTasks.length === 0 && (
                   <p className="text-[#56615f] text-sm">오늘 등록된 일정이 없어요.</p>
                 )}
-                {data?.todayTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className={`rounded-xl p-5 flex items-start gap-4 group transition-colors duration-300 cursor-pointer ${
-                      task.status === "completed" ? "bg-white opacity-60" : "bg-[#eef5f3] hover:bg-[#e7f0ed]"
-                    }`}
-                  >
-                    <button
-                      onClick={() => scheduleApi.complete(task.id).then(() => dashboardApi.get().then((r) => setData(r.data)))}
-                      className="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-[#a9b4b2] group-hover:border-[#006b64] transition-colors flex items-center justify-center"
+                {data?.todayTasks.map((task) => {
+                  const isCompleted = task.status === "completed"
+                  return (
+                    <div
+                      key={task.id}
+                      className={`rounded-xl p-5 flex items-start gap-4 group transition-colors duration-300 ${
+                        isCompleted ? "bg-white opacity-60" : "bg-[#eef5f3] hover:bg-[#e7f0ed] cursor-pointer"
+                      }`}
                     >
-                      <span className={`material-symbols-outlined text-xs transition-colors ${task.status === "completed" ? "text-[#7fe6db]" : "text-transparent group-hover:text-[#7fe6db]"}`}>check</span>
-                    </button>
-                    <div className="flex-1">
-                      <p className={`font-semibold text-[#2a3433] ${task.status === "completed" ? "line-through" : ""}`}>{task.title}</p>
-                      <p className="text-sm text-[#56615f] mt-1">{toTimeStr(task.startTime)} - {toTimeStr(task.endTime)}</p>
+                      {isCompleted ? (
+                        <div className="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-[#cce8e4] flex items-center justify-center">
+                          <span className="material-symbols-outlined text-xs text-[#006b64]" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => scheduleApi.complete(task.id).then(() => dashboardApi.get().then((r) => setData(r.data)))}
+                          className="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-[#a9b4b2] group-hover:border-[#006b64] transition-colors flex items-center justify-center"
+                        >
+                          <span className="material-symbols-outlined text-xs text-transparent group-hover:text-[#7fe6db] transition-colors">check</span>
+                        </button>
+                      )}
+                      <div className="flex-1">
+                        <p className={`font-semibold ${isCompleted ? "line-through text-[#a9b4b2]" : "text-[#2a3433]"}`}>{task.title}</p>
+                        <p className="text-sm text-[#56615f] mt-1">{toTimeStr(task.startTime)} - {toTimeStr(task.endTime)}</p>
+                      </div>
+                      <span className="text-sm text-[#56615f] bg-white px-3 py-1 rounded-full whitespace-nowrap">{toTimeStr(task.startTime)}</span>
                     </div>
-                    <span className="text-sm text-[#56615f] bg-white px-3 py-1 rounded-full whitespace-nowrap">{toTimeStr(task.startTime)}</span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </section>
 

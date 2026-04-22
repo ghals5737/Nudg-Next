@@ -1,6 +1,6 @@
 "use client"
 
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { useState } from "react"
 import { routinesApi } from "@/lib/api/routines"
 
@@ -56,7 +56,7 @@ export function NewRoutineDialog({ open, onOpenChange, onSuccess }: NewRoutineDi
       <DialogContent className="bg-[#f6faf8] sm:max-w-2xl rounded-[2rem] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] border-none p-0 gap-0 overflow-hidden">
         <div className="px-8 pt-10 pb-6 max-h-[90vh] overflow-y-auto">
           <div className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#2a3433] mb-4">새 루틴</h1>
+            <DialogTitle className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#2a3433] mb-4">새 루틴</DialogTitle>
             <p className="text-lg text-[#56615f] leading-relaxed">부드러운 리듬을 만들어 보세요.</p>
           </div>
 

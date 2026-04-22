@@ -189,7 +189,7 @@ export default function LoginPage() {
           {/* 소셜 로그인 */}
           <button
             type="button"
-            onClick={() => { window.location.href = `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/oauth2/authorization/google` }}
+            onClick={() => { window.location.href = "/api/oauth2/authorization/google" }}
             className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-[#e7f0ed] bg-white hover:bg-[#f6faf8] text-[#2a3433] font-semibold text-sm transition-colors duration-300"
           >
             <svg width="20" height="20" viewBox="0 0 48 48" fill="none">
