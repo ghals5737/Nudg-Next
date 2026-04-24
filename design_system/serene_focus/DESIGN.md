@@ -10,7 +10,7 @@ We are building a **Cognitive Sanctuary**. This is achieved through intentional 
 ---
 
 ## 2. Colors & Tonal Architecture
-The palette is rooted in a calming Teal (`#4DB6AC`), evolved into a sophisticated spectrum of functional pastels.
+The palette is rooted in a calming Lake Blue (`#0B5C7A`), evolved into a sophisticated spectrum of functional pastels that evoke the stillness of a misty morning lake.
 
 ### The "No-Line" Rule
 **Explicit Instruction:** Solid 1px borders are strictly prohibited for sectioning or containment. Traditional lines act as "visual speedbumps" for ADHD brains. Instead, define boundaries through:
@@ -19,14 +19,14 @@ The palette is rooted in a calming Teal (`#4DB6AC`), evolved into a sophisticate
 
 ### Surface Hierarchy & Nesting
 Think of the UI as a series of physical layers. Use the `surface-container` tiers to create a "nested" depth that guides the user from the general to the specific:
-- **Base Level:** `background` (#f6faf8) – The canvas.
-- **Section Level:** `surface-container-low` (#eef5f3) – Large groupings.
+- **Base Level:** `background` (#F5F8FB) – The canvas (misty morning water).
+- **Section Level:** `surface-container-low` (#E8EFF5) – Large groupings (shallow water).
 - **Interactive Level:** `surface-container-lowest` (#ffffff) – High-focus cards or inputs that "lift" off the page.
 
-### The "Glass & Gradient" Rule
-To elevate the experience from "minimalist" to "premium," use **Glassmorphism** for floating elements (like persistent action buttons or navigation). Use `surface` colors at 70% opacity with a `24px` backdrop blur. 
+### The "Glass" Rule
+To elevate the experience from "minimalist" to "premium," use **Glassmorphism** for floating elements (like persistent action buttons or navigation). Use `surface` colors at 70% opacity with a `24px` backdrop blur — this mimics light diffusing through still water without introducing color transitions.
 
-**Signature Texture:** For primary CTAs, do not use flat teal. Apply a subtle linear gradient from `primary` (#006b64) to `primary_container` (#7fe6db) at a 135-degree angle. This adds a "tactile soul" to the interface, making the primary action feel inviting and soft.
+**Flat Color Principle:** Primary CTAs use the solid `primary` (#0B5C7A) Lake Deep. **No color gradients.** Gradients introduce visual motion that competes for attention; the sanctuary is defined by stillness. Tactility comes from the Ambient Shadow, subtle hover-state saturation shifts, and the Ghost Border on focus — not from painted depth. (Exception: fade-to-transparent edge-softening on dividers is permitted, since it creates *absence*, not a color transition.)
 
 ---
 
@@ -42,10 +42,10 @@ We utilize **Plus Jakarta Sans**, a modern geometric sans-serif with open apertu
 ## 4. Elevation & Depth
 Depth in this system is achieved through **Tonal Layering**, not structural shadows.
 
-- **The Layering Principle:** Avoid the "flat" look by stacking surfaces. A card using `surface-container-highest` (#d9e5e2) placed on a `surface` (#f6faf8) provides enough contrast to be distinct without the need for a stroke.
+- **The Layering Principle:** Avoid the "flat" look by stacking surfaces. A card using `surface-container-highest` (#CFDCE6) placed on a `surface` (#F5F8FB) provides enough contrast to be distinct without the need for a stroke.
 - **Ambient Shadows:** When an element must float (e.g., a Modal or a FAB), use an "Ambient Shadow." 
-    - *Formula:* `0px 12px 32px rgba(42, 52, 51, 0.06)`. 
-    - The shadow is tinted with the `on_surface` color, making it feel like a natural part of the environment.
+    - *Formula:* `0px 12px 32px rgba(36, 50, 61, 0.06)`. 
+    - The shadow is tinted with the `on_surface` color (a cool slate blue), making it feel like a natural part of the environment.
 - **The "Ghost Border" Fallback:** If a border is required for accessibility (e.g., in a high-glare environment), use the `outline_variant` token at **15% opacity**. It should be felt, not seen.
 
 ---
@@ -53,8 +53,8 @@ Depth in this system is achieved through **Tonal Layering**, not structural shad
 ## 5. Components
 
 ### Buttons & Chips
-- **Primary Button:** Large roundedness (`xl` - 3rem). Uses the Signature Gradient. No shadow, except on hover (Ambient Shadow).
-- **Secondary/Selection Chips:** Use `secondary_container` (#cce8e4) with `on_secondary_container` text. When unselected, use `surface_container_high`.
+- **Primary Button:** Large roundedness (`xl` - 3rem). Solid `primary` (#0B5C7A) fill — no gradients. No shadow, except on hover (Ambient Shadow). Hover raises saturation subtly over 400ms for "tactile" feedback.
+- **Secondary/Selection Chips:** Use `secondary_container` (#D5E4EE) with `on_secondary_container` text. When unselected, use `surface_container_high`.
 - **Interaction:** All interactive elements must have a `400ms` ease-out transition on hover, subtly increasing the background saturation.
 
 ### Input Fields
@@ -67,7 +67,7 @@ Depth in this system is achieved through **Tonal Layering**, not structural shad
 - **The Alternating Surface:** Separate list items by alternating between `surface` and `surface_container_low`, or simply by providing `1.5rem` of vertical whitespace.
 
 ### Contextual "Nudge" Tooltips
-- **Styling:** Soft-focus `tertiary_container` (#b7e7ff) with `on_tertiary_container` text. 
+- **Styling:** Soft-focus `tertiary_container` (#A8CFE3) with `on_tertiary_container` text. 
 - **Placement:** Always offset from the center to maintain the "intentional asymmetry" of the system.
 
 ---
@@ -81,6 +81,6 @@ Depth in this system is achieved through **Tonal Layering**, not structural shad
 
 ### Don't:
 - **No 1px Lines:** Never use a solid line to separate content. Use a background color shift instead.
-- **No Pure Black:** Never use `#000000`. Use `on_background` (#2a3433) to keep the contrast "soft-focus."
+- **No Pure Black:** Never use `#000000`. Use `on_background` (#24323D — a cool slate blue) to keep the contrast "soft-focus."
 - **No Chaotic Motion:** Avoid "pop" animations. Use "glide" or "fade-in" transitions to keep the user’s nervous system regulated.
 - **No Center-Align Overload:** While some editorial moments call for it, over-centering can make it hard for ADHD eyes to find the "start" of a line. Stick to left-aligned body text with asymmetric headers.

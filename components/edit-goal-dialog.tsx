@@ -1,26 +1,36 @@
 "use client"
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { goalsApi } from "@/lib/api/goals"
+import type { Goal } from "@/types/api"
 
-interface NewGoalDialogProps {
+interface EditGoalDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  goal: Goal | null
   onSuccess?: () => void
 }
 
-export function NewGoalDialog({ open, onOpenChange, onSuccess }: NewGoalDialogProps) {
+export function EditGoalDialog({ open, onOpenChange, goal, onSuccess }: EditGoalDialogProps) {
   const [title, setTitle] = useState("")
-  const [steps, setSteps] = useState<string[]>(["", ""])
+  const [steps, setSteps] = useState<{ id?: string; label: string; done: boolean }[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const addStep = () => setSteps([...steps, ""])
+  useEffect(() => {
+    if (!open || !goal) return
+    setTitle(goal.title)
+    setSteps(goal.steps.map((s) => ({ id: s.id, label: s.label, done: s.done })))
+    setError(null)
+  }, [open, goal?.id])
 
-  const updateStep = (i: number, value: string) => {
+  const addStep = () => setSteps([...steps, { label: "", done: false }])
+
+  const updateStep = (i: number, label: string) => {
     const updated = [...steps]
-    updated[i] = value
+    updated[i] = { ...updated[i], label }
     setSteps(updated)
   }
 
@@ -28,23 +38,39 @@ export function NewGoalDialog({ open, onOpenChange, onSuccess }: NewGoalDialogPr
 
   const handleClose = () => {
     onOpenChange(false)
-    setTitle("")
-    setSteps(["", ""])
     setError(null)
   }
 
   const handleSubmit = async () => {
-    if (!title.trim()) return
+    if (!goal || !title.trim()) return
     setSubmitting(true)
     setError(null)
     try {
-      await goalsApi.create({ title, steps: steps.filter(Boolean) })
+      await goalsApi.update(goal.id, {
+        title,
+        steps: steps.filter((s) => s.label.trim()).map((s) => s.label),
+      })
       handleClose()
       onSuccess?.()
     } catch (e) {
       setError(e instanceof Error ? e.message : "오류가 발생했습니다.")
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!goal) return
+    setDeleting(true)
+    setError(null)
+    try {
+      await goalsApi.delete(goal.id)
+      handleClose()
+      onSuccess?.()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "삭제 중 오류가 발생했습니다.")
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -55,7 +81,7 @@ export function NewGoalDialog({ open, onOpenChange, onSuccess }: NewGoalDialogPr
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center gap-3 text-[#0b5c7a]">
               <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <DialogTitle className="font-bold text-sm tracking-widest text-[#083d52] uppercase">새 목표</DialogTitle>
+              <DialogTitle className="font-bold text-sm tracking-widest text-[#083d52] uppercase">목표 수정</DialogTitle>
             </div>
             <button onClick={handleClose} className="text-[#6a7a8a] hover:text-[#24323d] transition-colors p-2 rounded-full hover:bg-[#e8eff5]/50">
               <span className="material-symbols-outlined">close</span>
@@ -90,20 +116,20 @@ export function NewGoalDialog({ open, onOpenChange, onSuccess }: NewGoalDialogPr
 
           <div className="space-y-4">
             {steps.map((step, i) => (
-              <div key={i} className="flex items-start gap-4 group">
+              <div key={i} className="flex items-start gap-4 group/step">
                 <div className="flex-shrink-0 mt-1">
                   <div className="w-8 h-8 rounded-full bg-[#e8eff5] flex items-center justify-center text-[#6a7a8a] font-semibold text-sm">{i + 1}</div>
                 </div>
-                <div className="flex-1 bg-[#e8eff5] rounded-[1.5rem] p-4 transition-all duration-300 group-hover:bg-[#e8eff5]">
+                <div className="flex-1 bg-[#e8eff5] rounded-[1.5rem] p-4 transition-all duration-300 group-hover/step:bg-[#e8eff5]">
                   <input
                     className="w-full bg-transparent border-none p-0 text-lg text-[#24323d] focus:ring-0 focus:outline-none placeholder:text-[#6a7a8a]/50"
                     placeholder={i === 0 ? "첫 번째 스텝을 입력하세요" : "다음 스텝은 무엇인가요?"}
-                    value={step}
+                    value={step.label}
                     onChange={(e) => updateStep(i, e.target.value)}
                   />
                 </div>
                 {steps.length > 1 && (
-                  <button onClick={() => removeStep(i)} className="mt-2 text-[#6a7a8a]/40 hover:text-[#a83836] transition-colors p-2 opacity-0 group-hover:opacity-100">
+                  <button onClick={() => removeStep(i)} className="mt-2 text-[#6a7a8a]/40 hover:text-[#a83836] transition-colors p-2 opacity-0 group-hover/step:opacity-100">
                     <span className="material-symbols-outlined">delete</span>
                   </button>
                 )}
@@ -121,18 +147,28 @@ export function NewGoalDialog({ open, onOpenChange, onSuccess }: NewGoalDialogPr
           </div>
         </div>
 
-        <div className="px-8 py-6 bg-white border-t border-[#e8eff5]/50 flex justify-end gap-4">
-          <button onClick={handleClose} className="px-6 py-4 rounded-full text-[#6a7a8a] font-semibold hover:bg-[#e8eff5] transition-colors">
-            취소
-          </button>
+        <div className="px-8 py-6 bg-white border-t border-[#e8eff5]/50 flex justify-between gap-4">
           <button
-            onClick={handleSubmit}
-            disabled={!title.trim() || submitting}
-            className="px-8 py-4 rounded-full text-[#ffffff] font-semibold shadow-[0px_8px_24px_rgba(11,92,122,0.15)] hover:shadow-[0px_12px_32px_rgba(11,92,122,0.2)] transition-all duration-300 hover:-translate-y-0.5 bg-[#0b5c7a] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
+            onClick={handleDelete}
+            disabled={deleting || submitting}
+            className="px-5 py-4 rounded-full text-[#b91c1c] font-semibold hover:bg-[#fef2f2] transition-colors disabled:opacity-50 flex items-center gap-2"
           >
-            {submitting ? "저장 중..." : "목표 심기"}
-            {!submitting && <span className="material-symbols-outlined text-lg">arrow_forward</span>}
+            <span className="material-symbols-outlined text-base">delete</span>
+            {deleting ? "삭제 중..." : "삭제"}
           </button>
+          <div className="flex gap-3">
+            <button onClick={handleClose} className="px-6 py-4 rounded-full text-[#6a7a8a] font-semibold hover:bg-[#e8eff5] transition-colors">
+              취소
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={!title.trim() || submitting || deleting}
+              className="px-8 py-4 rounded-full text-[#ffffff] font-semibold shadow-[0px_8px_24px_rgba(11,92,122,0.15)] hover:shadow-[0px_12px_32px_rgba(11,92,122,0.2)] transition-all duration-300 hover:-translate-y-0.5 bg-[#0b5c7a] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
+            >
+              {submitting ? "저장 중..." : "저장"}
+              {!submitting && <span className="material-symbols-outlined text-lg">arrow_forward</span>}
+            </button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

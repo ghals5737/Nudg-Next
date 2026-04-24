@@ -54,8 +54,8 @@ export function QuickRecordDialog({ open, onOpenChange }: QuickRecordDialogProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto bg-white sm:max-w-[560px] rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] p-8">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#1A1B1E] text-lg font-semibold">
-            <Zap className="h-5 w-5 text-[#4DB6AC]" />
+          <DialogTitle className="flex items-center gap-2 text-[#24323d] text-lg font-semibold">
+            <Zap className="h-5 w-5 text-[#0b5c7a]" />
             빠른 기록
           </DialogTitle>
         </DialogHeader>
@@ -63,10 +63,10 @@ export function QuickRecordDialog({ open, onOpenChange }: QuickRecordDialogProps
         <div className="space-y-6 py-4">
           {/* Mood Section */}
           <div className="space-y-4">
-            <label className="text-sm font-medium text-[#343A40]">지금 기분은 어떤가요?</label>
+            <label className="text-sm font-medium text-[#24323d]">지금 기분은 어떤가요?</label>
             <div className="flex flex-col items-center gap-3">
               <span className="text-6xl">{currentMood.emoji}</span>
-              <span className="text-sm text-[#343A40]">{currentMood.label}</span>
+              <span className="text-sm text-[#24323d]">{currentMood.label}</span>
               <div className="w-full px-2">
                 <Slider
                   value={moodScore}
@@ -76,7 +76,7 @@ export function QuickRecordDialog({ open, onOpenChange }: QuickRecordDialogProps
                   step={1}
                   className="w-full"
                 />
-                <div className="mt-2 flex justify-between text-xs text-[#868E96]">
+                <div className="mt-2 flex justify-between text-xs text-[#6a7a8a]">
                   <span>-5</span>
                   <span>0</span>
                   <span>+5</span>
@@ -87,20 +87,20 @@ export function QuickRecordDialog({ open, onOpenChange }: QuickRecordDialogProps
 
           {/* Impulse Section */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#343A40]">지금 하고 싶은 행동은...</label>
+            <label className="text-sm font-medium text-[#24323d]">지금 하고 싶은 행동은...</label>
             <Textarea
               placeholder="예: 스마트폰을 계속 확인하고 싶은 충동"
               value={impulse}
               onChange={(e) => setImpulse(e.target.value)}
               maxLength={500}
-              className="min-h-[100px] resize-none border-[#E9ECEF] bg-white text-[#343A40] placeholder:text-[#ADB5BD] focus:border-[#4DB6AC] focus:ring-[#4DB6AC] focus:ring-[3px] focus:ring-opacity-10 rounded-lg"
+              className="min-h-[100px] resize-none border-[#cfdce6] bg-white text-[#24323d] placeholder:text-[#a8b4bf] focus:border-[#0b5c7a] focus:ring-[#0b5c7a] focus:ring-[3px] focus:ring-opacity-10 rounded-lg"
             />
-            <div className="text-right text-xs text-[#868E96]">{impulse.length}/500</div>
+            <div className="text-right text-xs text-[#6a7a8a]">{impulse.length}/500</div>
           </div>
 
           {/* Coping Methods */}
           <div className="space-y-3">
-            <label className="text-sm font-medium text-[#343A40]">대처법</label>
+            <label className="text-sm font-medium text-[#24323d]">대처법</label>
             <div className="grid grid-cols-3 gap-3">
               {copingMethods.map((method) => {
                 const Icon = method.icon
@@ -111,8 +111,8 @@ export function QuickRecordDialog({ open, onOpenChange }: QuickRecordDialogProps
                     onClick={() => setSelectedCoping(method.id)}
                     className={`h-24 flex flex-col items-center justify-center gap-2 rounded-lg border-2 transition-all ${
                       isSelected
-                        ? "border-[#4DB6AC] bg-[#E0F2F1] text-[#4DB6AC] shadow-[0_2px_6px_rgba(77,182,172,0.2)]"
-                        : "border-[#E9ECEF] bg-white text-[#343A40] hover:border-[#4DB6AC] hover:bg-[#F8F9FA]"
+                        ? "border-[#0b5c7a] bg-[#d5e4ee] text-[#0b5c7a] shadow-[0_2px_6px_rgba(11,92,122,0.2)]"
+                        : "border-[#cfdce6] bg-white text-[#24323d] hover:border-[#0b5c7a] hover:bg-[#f5f8fb]"
                     }`}
                   >
                     <Icon className="h-6 w-6" />
@@ -125,16 +125,16 @@ export function QuickRecordDialog({ open, onOpenChange }: QuickRecordDialogProps
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 pt-4 border-t border-[#E9ECEF]">
+        <div className="flex justify-end gap-2 pt-4 border-t border-[#cfdce6]">
           <button
             onClick={() => onOpenChange(false)}
-            className="px-4 py-2 text-sm text-[#868E96] hover:text-[#343A40] transition-colors"
+            className="px-4 py-2 text-sm text-[#6a7a8a] hover:text-[#24323d] transition-colors"
           >
             취소
           </button>
           <button
             onClick={handleSave}
-            className="px-6 py-2 bg-[#4DB6AC] hover:bg-[#3AA996] text-white rounded-lg text-sm font-semibold shadow-[0_2px_6px_rgba(77,182,172,0.2)] transition-colors"
+            className="px-6 py-2 bg-[#0b5c7a] hover:bg-[#083d52] text-white rounded-lg text-sm font-semibold shadow-[0_2px_6px_rgba(11,92,122,0.2)] transition-colors"
           >
             저장
           </button>

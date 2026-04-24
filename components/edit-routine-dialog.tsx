@@ -1,19 +1,21 @@
 "use client"
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { routinesApi } from "@/lib/api/routines"
 import { TimePicker } from "@/components/time-picker"
+import type { RoutineWithRhythm } from "@/types/api"
 
-interface NewRoutineDialogProps {
+interface EditRoutineDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  routine: RoutineWithRhythm | null
   onSuccess?: () => void
 }
 
 const dayLabels = ["월", "화", "수", "목", "금", "토", "일"]
 
-export function NewRoutineDialog({ open, onOpenChange, onSuccess }: NewRoutineDialogProps) {
+export function EditRoutineDialog({ open, onOpenChange, routine, onSuccess }: EditRoutineDialogProps) {
   const [title, setTitle] = useState("")
   const [time, setTime] = useState("07:00")
   const [timePickerOpen, setTimePickerOpen] = useState(false)
@@ -21,7 +23,19 @@ export function NewRoutineDialog({ open, onOpenChange, onSuccess }: NewRoutineDi
   const [selectedDays, setSelectedDays] = useState([true, true, true, true, true, false, false])
   const [smartReminders, setSmartReminders] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!open || !routine) return
+    setTitle(routine.title)
+    setTime(routine.time)
+    setDuration(routine.duration)
+    setSelectedDays(routine.days.length === 7 ? routine.days : [true, true, true, true, true, false, false])
+    setSmartReminders(routine.smartReminders)
+    setTimePickerOpen(false)
+    setError(null)
+  }, [open, routine?.id])
 
   const toggleDay = (i: number) => {
     const updated = [...selectedDays]
@@ -31,19 +45,16 @@ export function NewRoutineDialog({ open, onOpenChange, onSuccess }: NewRoutineDi
 
   const handleClose = () => {
     onOpenChange(false)
-    setTitle("")
-    setTime("07:00")
-    setDuration(15)
-    setSelectedDays([true, true, true, true, true, false, false])
+    setTimePickerOpen(false)
     setError(null)
   }
 
   const handleSubmit = async () => {
-    if (!title.trim()) return
+    if (!routine || !title.trim()) return
     setSubmitting(true)
     setError(null)
     try {
-      await routinesApi.create({ title, time, duration, days: selectedDays, smartReminders })
+      await routinesApi.update(routine.id, { title, time, duration, days: selectedDays, smartReminders })
       handleClose()
       onSuccess?.()
     } catch (e) {
@@ -53,13 +64,28 @@ export function NewRoutineDialog({ open, onOpenChange, onSuccess }: NewRoutineDi
     }
   }
 
+  const handleDelete = async () => {
+    if (!routine) return
+    setDeleting(true)
+    setError(null)
+    try {
+      await routinesApi.delete(routine.id)
+      handleClose()
+      onSuccess?.()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "삭제 중 오류가 발생했습니다.")
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="bg-[#f5f8fb] sm:max-w-2xl rounded-[2rem] shadow-[0px_12px_32px_rgba(36,50,61,0.06)] border-none p-0 gap-0 overflow-hidden">
         <div className="px-8 pt-10 pb-6 max-h-[90vh] overflow-y-auto">
           <div className="mb-12">
-            <DialogTitle className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#24323d] mb-4">새 루틴</DialogTitle>
-            <p className="text-lg text-[#6a7a8a] leading-relaxed">부드러운 리듬을 만들어 보세요.</p>
+            <DialogTitle className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#24323d] mb-4">루틴 수정</DialogTitle>
+            <p className="text-lg text-[#6a7a8a] leading-relaxed">루틴을 원하는 대로 조정하세요.</p>
           </div>
 
           {error && (
@@ -154,15 +180,23 @@ export function NewRoutineDialog({ open, onOpenChange, onSuccess }: NewRoutineDi
             </div>
 
             <div className="pb-4 flex gap-4 items-center">
+              <button
+                onClick={handleDelete}
+                disabled={deleting || submitting}
+                className="px-5 py-5 rounded-xl text-[#b91c1c] font-semibold hover:bg-[#fef2f2] transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-base">delete</span>
+                {deleting ? "삭제 중..." : "삭제"}
+              </button>
               <button onClick={handleClose} className="flex-1 bg-[#cfdce6] text-[#24323d] font-semibold text-lg py-5 px-8 rounded-xl hover:bg-[#e8eff5] transition-colors">
                 취소
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={!title.trim() || submitting}
+                disabled={!title.trim() || submitting || deleting}
                 className="flex-[2] bg-[#0b5c7a] text-[#ffffff] font-bold text-lg py-5 px-8 rounded-xl shadow-sm hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? "저장 중..." : "루틴 만들기"}
+                {submitting ? "저장 중..." : "저장"}
               </button>
             </div>
           </div>

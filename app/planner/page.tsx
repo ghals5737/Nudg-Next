@@ -8,7 +8,12 @@ import { EditScheduleDialog } from "@/components/edit-schedule-dialog"
 import { scheduleApi } from "@/lib/api/schedule"
 import type { ScheduleBlock } from "@/types/api"
 
-const toDateStr = (date: Date) => date.toISOString().slice(0, 10)
+const toDateStr = (date: Date) => {
+  const y = date.getFullYear()
+  const m = (date.getMonth() + 1).toString().padStart(2, "0")
+  const d = date.getDate().toString().padStart(2, "0")
+  return `${y}-${m}-${d}`
+}
 
 const toTimeStr = (t: number) => {
   const h = Math.floor(t)
@@ -126,12 +131,12 @@ export default function PlannerPage() {
     : 0
 
   return (
-    <div className="min-h-screen bg-[#f6faf8] text-[#2a3433] flex">
+    <div className="min-h-screen bg-[#f5f8fb] text-[#24323d] flex">
       <AppSidebar />
 
       {/* 활성 타이머 바 */}
       {activeBlock && (
-        <div className="fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-[#006b64] to-[#7fe6db] text-[#e2fffa] shadow-[0px_4px_16px_rgba(0,107,100,0.2)]">
+        <div className="fixed top-0 left-0 right-0 z-40 bg-[#0b5c7a] text-[#ffffff] shadow-[0px_4px_16px_rgba(11,92,122,0.2)]">
           {/* 진행 바 */}
           <div
             className="absolute bottom-0 left-0 h-0.5 bg-white/40 transition-all duration-1000"
@@ -142,7 +147,7 @@ export default function PlannerPage() {
               <span className="material-symbols-outlined text-xl animate-pulse">timer</span>
               <div>
                 <span className="font-semibold">{activeBlock.title}</span>
-                <span className="ml-3 text-[#e2fffa]/70 text-sm">예상 {toDurationStr(activeBlock.duration)}</span>
+                <span className="ml-3 text-[#ffffff]/70 text-sm">예상 {toDurationStr(activeBlock.duration)}</span>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -166,7 +171,7 @@ export default function PlannerPage() {
 
       <main className={`flex-1 md:ml-72 flex flex-col min-h-screen ${activeBlock ? "pt-[52px]" : ""}`}>
         <header className="hidden md:flex justify-end items-center px-8 pt-6 pb-4">
-          <button className="p-2 rounded-full hover:bg-[#eef5f3] transition-colors">
+          <button className="p-2 rounded-full hover:bg-[#e8eff5] transition-colors">
             <span className="material-symbols-outlined text-2xl">notifications</span>
           </button>
         </header>
@@ -174,23 +179,23 @@ export default function PlannerPage() {
         <div className="flex-1 px-4 sm:px-8 lg:px-12 pb-24 md:pb-8 max-w-4xl mx-auto w-full">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#2a3433] mb-2">오늘의 집중</h2>
-              <div className="flex items-center gap-3 text-[#56615f]">
-                <button onClick={() => goTo(-1)} className="p-1 hover:text-[#006b64] transition-colors">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#24323d] mb-2">오늘의 집중</h2>
+              <div className="flex items-center gap-3 text-[#6a7a8a]">
+                <button onClick={() => goTo(-1)} className="p-1 hover:text-[#0b5c7a] transition-colors">
                   <span className="material-symbols-outlined text-xl">chevron_left</span>
                 </button>
                 <span className="font-medium">{formatDate(currentDate)}</span>
-                <button onClick={() => goTo(1)} className="p-1 hover:text-[#006b64] transition-colors">
+                <button onClick={() => goTo(1)} className="p-1 hover:text-[#0b5c7a] transition-colors">
                   <span className="material-symbols-outlined text-xl">chevron_right</span>
                 </button>
                 {!isToday() && (
-                  <button onClick={() => setCurrentDate(new Date())} className="text-sm text-[#006b64] hover:text-[#005e57] font-medium">오늘</button>
+                  <button onClick={() => setCurrentDate(new Date())} className="text-sm text-[#0b5c7a] hover:text-[#083d52] font-medium">오늘</button>
                 )}
               </div>
             </div>
             <button
               onClick={() => setShowNewScheduleDialog(true)}
-              className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-full bg-[#cce8e4] text-[#3d5653] font-semibold hover:bg-[#e1eae8] transition-colors duration-300"
+              className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-full bg-[#d5e4ee] text-[#3d4e58] font-semibold hover:bg-[#cfdce6] transition-colors duration-300"
             >
               <span className="material-symbols-outlined">add</span>
               새 블록
@@ -198,14 +203,14 @@ export default function PlannerPage() {
           </div>
 
           {loading ? (
-            <p className="text-[#56615f]">불러오는 중...</p>
+            <p className="text-[#6a7a8a]">불러오는 중...</p>
           ) : sortedBlocks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
-              <span className="material-symbols-outlined text-5xl text-[#a9b4b2]">calendar_today</span>
-              <p className="text-[#56615f] font-medium">등록된 일정이 없어요</p>
+              <span className="material-symbols-outlined text-5xl text-[#a8b4bf]">calendar_today</span>
+              <p className="text-[#6a7a8a] font-medium">등록된 일정이 없어요</p>
               <button
                 onClick={() => setShowNewScheduleDialog(true)}
-                className="mt-2 flex items-center gap-2 px-6 py-3 rounded-full bg-[#cce8e4] text-[#3d5653] font-semibold hover:bg-[#e1eae8] transition-colors"
+                className="mt-2 flex items-center gap-2 px-6 py-3 rounded-full bg-[#d5e4ee] text-[#3d4e58] font-semibold hover:bg-[#cfdce6] transition-colors"
               >
                 <span className="material-symbols-outlined text-sm">add</span>
                 첫 블록 추가하기
@@ -213,7 +218,7 @@ export default function PlannerPage() {
             </div>
           ) : (
             <div className="space-y-4 relative">
-              <div className="absolute left-[39px] top-4 bottom-4 w-px bg-[#a9b4b2] opacity-15 hidden sm:block" />
+              <div className="absolute left-[39px] top-4 bottom-4 w-px bg-[#a8b4bf] opacity-15 hidden sm:block" />
               {sortedBlocks.map((block) => {
                 const isActive = block.id === activeBlockId
                 const isCurrentBlock = isCurrentTimeBlock(block)
@@ -223,55 +228,57 @@ export default function PlannerPage() {
                 return (
                   <div key={block.id} className="flex gap-4 sm:gap-8 items-start group">
                     <div className="hidden sm:flex flex-col items-center min-w-[80px] pt-4">
-                      <span className={`font-bold ${isActive || isCurrentBlock ? "text-[#006b64]" : isPast ? "text-[#a9b4b2]" : "text-[#56615f]"}`}>
+                      <span className={`font-bold ${isActive || isCurrentBlock ? "text-[#0b5c7a]" : isPast ? "text-[#a8b4bf]" : "text-[#6a7a8a]"}`}>
                         {toTimeStr(block.startTime)}
                       </span>
-                      <span className="text-xs text-[#56615f] mt-1">{toDurationStr(block.duration)}</span>
+                      <span className="text-xs text-[#6a7a8a] mt-1">{toDurationStr(block.duration)}</span>
                     </div>
 
                     {(
-                      <div className={`flex-1 rounded-xl p-6 relative overflow-hidden transition-all duration-300 ease-out ${
-                        isCompleted
-                          ? "bg-white opacity-50"
-                          : isActive
-                          ? "bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.1)] ring-2 ring-[#7fe6db]/50"
-                          : isCurrentBlock
-                          ? "bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.06)]"
-                          : "bg-[#eef5f3] hover:bg-[#e7f0ed] hover:shadow-[0px_16px_40px_rgba(42,52,51,0.08)]"
-                      } ${isPast && !isCurrentBlock && !isCompleted ? "opacity-60" : ""}`}>
+                      <div
+                        onClick={() => setEditingBlock(block)}
+                        className={`flex-1 rounded-xl p-6 relative overflow-hidden transition-all duration-300 ease-out cursor-pointer ${
+                          isCompleted
+                            ? "bg-white opacity-50"
+                            : isActive
+                            ? "bg-white shadow-[0px_12px_32px_rgba(36,50,61,0.1)] ring-2 ring-[#b8dcec]/50"
+                            : isCurrentBlock
+                            ? "bg-white shadow-[0px_12px_32px_rgba(36,50,61,0.06)]"
+                            : "bg-[#e8eff5] hover:bg-[#e8eff5] hover:shadow-[0px_16px_40px_rgba(36,50,61,0.08)]"
+                        } ${isPast && !isCurrentBlock && !isCompleted ? "opacity-60" : ""}`}>
 
                         {/* 좌측 상태 표시 바 */}
                         <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-colors ${
-                          isActive ? "bg-gradient-to-b from-[#006b64] to-[#7fe6db]"
-                          : isCurrentBlock ? "bg-[#006b64]"
-                          : isCompleted ? "bg-[#cce8e4]"
+                          isActive ? "bg-[#0b5c7a]"
+                          : isCurrentBlock ? "bg-[#0b5c7a]"
+                          : isCompleted ? "bg-[#d5e4ee]"
                           : "bg-transparent"
                         }`} />
 
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2 sm:hidden">
-                              <span className={`text-sm font-bold ${isActive || isCurrentBlock ? "text-[#006b64]" : "text-[#56615f]"}`}>
+                              <span className={`text-sm font-bold ${isActive || isCurrentBlock ? "text-[#0b5c7a]" : "text-[#6a7a8a]"}`}>
                                 {toTimeStr(block.startTime)}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className={`text-lg font-bold ${isCompleted ? "line-through text-[#a9b4b2]" : "text-[#2a3433]"}`}>
+                              <h3 className={`text-lg font-bold ${isCompleted ? "line-through text-[#a8b4bf]" : "text-[#24323d]"}`}>
                                 {block.title}
                               </h3>
                               {isCompleted && (
-                                <span className="text-xs bg-[#cce8e4] text-[#3d5653] px-2 py-0.5 rounded-full font-medium">완료</span>
+                                <span className="text-xs bg-[#d5e4ee] text-[#3d4e58] px-2 py-0.5 rounded-full font-medium">완료</span>
                               )}
                             </div>
                             {block.location && (
-                              <p className="text-sm text-[#56615f] flex items-center gap-1 mb-2">
+                              <p className="text-sm text-[#6a7a8a] flex items-center gap-1 mb-2">
                                 <span className="material-symbols-outlined text-sm">location_on</span>
                                 {block.location}
                               </p>
                             )}
                             {/* 실제 소요 시간 표시 (완료된 블록) */}
                             {isCompleted && (
-                              <p className="text-xs text-[#56615f] flex items-center gap-1">
+                              <p className="text-xs text-[#6a7a8a] flex items-center gap-1">
                                 <span className="material-symbols-outlined text-xs">schedule</span>
                                 실제 소요: {toDurationStr(block.duration)}
                               </p>
@@ -279,13 +286,13 @@ export default function PlannerPage() {
                             {/* 진행 중 타이머 표시 */}
                             {isActive && (
                               <div className="mt-3">
-                                <div className="flex items-center justify-between text-xs text-[#56615f] mb-1">
+                                <div className="flex items-center justify-between text-xs text-[#6a7a8a] mb-1">
                                   <span>진행 중</span>
                                   <span>{progressPercent}%</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-[#e1eae8] rounded-full overflow-hidden">
+                                <div className="h-1.5 w-full bg-[#cfdce6] rounded-full overflow-hidden">
                                   <div
-                                    className="h-full bg-gradient-to-r from-[#006b64] to-[#7fe6db] rounded-full transition-all duration-1000"
+                                    className="h-full bg-[#0b5c7a] rounded-full transition-all duration-1000"
                                     style={{ width: `${progressPercent}%` }}
                                   />
                                 </div>
@@ -294,15 +301,15 @@ export default function PlannerPage() {
                           </div>
 
                           {/* 액션 버튼 */}
-                          <div className="flex items-center gap-2 flex-shrink-0 self-start">
+                          <div className="flex items-center gap-2 flex-shrink-0 self-start" onClick={(e) => e.stopPropagation()}>
                             {!isCompleted && (
                               <>
                                 {isActive ? (
                                   <>
-                                    <span className="font-mono text-lg font-bold text-[#006b64] tabular-nums">{toElapsedStr(elapsed)}</span>
+                                    <span className="font-mono text-lg font-bold text-[#0b5c7a] tabular-nums">{toElapsedStr(elapsed)}</span>
                                     <button
                                       onClick={handleComplete}
-                                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#006b64] text-[#e2fffa] text-sm font-bold hover:bg-[#005e57] transition-colors"
+                                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0b5c7a] text-[#ffffff] text-sm font-bold hover:bg-[#083d52] transition-colors"
                                     >
                                       <span className="material-symbols-outlined text-sm">check</span>
                                       완료
@@ -310,13 +317,13 @@ export default function PlannerPage() {
                                   </>
                                 ) : (
                                   <>
-                                    <span className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#eef5f3] text-[#56615f] text-sm font-medium">
+                                    <span className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#e8eff5] text-[#6a7a8a] text-sm font-medium">
                                       <span className="material-symbols-outlined text-sm">timer</span>
                                       {toDurationStr(block.duration)}
                                     </span>
                                     <button
                                       onClick={() => handleStart(block)}
-                                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] text-sm font-bold hover:opacity-90 transition-opacity"
+                                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0b5c7a] text-[#ffffff] text-sm font-bold hover:opacity-90 transition-opacity"
                                     >
                                       <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
                                       시작
@@ -325,12 +332,6 @@ export default function PlannerPage() {
                                 )}
                               </>
                             )}
-                            <button
-                              onClick={() => setEditingBlock(block)}
-                              className="w-9 h-9 rounded-full bg-[#eef5f3] text-[#56615f] hover:bg-[#d9e5e2] hover:text-[#2a3433] transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
-                            >
-                              <span className="material-symbols-outlined text-sm">edit</span>
-                            </button>
                           </div>
                         </div>
                       </div>
@@ -345,7 +346,7 @@ export default function PlannerPage() {
 
       <button
         onClick={() => setShowNewScheduleDialog(true)}
-        className="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] flex items-center justify-center z-50"
+        className="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-[#0b5c7a] text-[#ffffff] shadow-[0px_12px_32px_rgba(36,50,61,0.06)] flex items-center justify-center z-50"
       >
         <span className="material-symbols-outlined text-2xl">add</span>
       </button>

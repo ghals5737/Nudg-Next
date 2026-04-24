@@ -16,68 +16,68 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Nudg light theme — soft, low-glare */ /* ≈ #F9FBFE */ /* ≈ #1A1E27 */
-  --card: oklch(1 0 0); /* #FFFFFF */
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0); /* #FFFFFF */
-  --popover-foreground: oklch(0.145 0 0);
+  /* Nudg light theme — Lake Blue Sanctuary (see design_system/serene_focus/DESIGN.md) */
+  --card: oklch(1 0 0); /* #FFFFFF lifted card */
+  --card-foreground: oklch(0.30 0.025 235); /* #24323D slate blue */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.30 0.025 235);
 
-  /* Brand: 파란 톤은 살리고 채도는 과하지 않게 */
-  --primary: oklch(0.205 0 0); /* ≈ #3E6CFF */
-  --primary-foreground: oklch(0.985 0 0); /* #FFFFFF */
-  --secondary: oklch(0.97 0 0); /* ≈ #F1F4FA (연한 보조 배경) */
-  --secondary-foreground: oklch(0.205 0 0);
+  /* Brand: Lake Blue — deep, low-chroma, still-water feel */
+  --primary: oklch(0.40 0.08 230); /* ≈ #0B5C7A Lake Deep */
+  --primary-foreground: oklch(1 0 0); /* #FFFFFF */
+  --secondary: oklch(0.91 0.025 230); /* ≈ #D5E4EE shallow water */
+  --secondary-foreground: oklch(0.30 0.025 235);
 
-  --muted: oklch(0.97 0 0); /* ≈ #F3F6FB */
-  --muted-foreground: oklch(0.556 0 0); /* ≈ #6A7384 */
-  --accent: oklch(0.97 0 0); /* ≈ #EEF3FB */
-  --accent-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.94 0.012 235); /* ≈ #E8EFF5 surface-container-low */
+  --muted-foreground: oklch(0.55 0.02 235); /* cool slate ≈ #6A7A8A */
+  --accent: oklch(0.82 0.05 225); /* ≈ #A8CFE3 sky reflection */
+  --accent-foreground: oklch(0.30 0.025 235);
 
   --destructive: oklch(0.577 0.245 27.325); /* ≈ #E85C6B */
-  --destructive-foreground: oklch(1 0 0); /* #FFFFFF */
+  --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.922 0 0); /* ≈ #E7ECF5 */
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0); /* brand와 동일 계열 */
+  --border: oklch(0.87 0.022 230); /* ≈ #CFDCE6 ghost border */
+  --input: oklch(0.87 0.022 230);
+  --ring: oklch(0.40 0.08 230); /* Lake Deep focus ring */
 
   /* Radius */
   --radius: 0.625rem;
 
-  /* Nudg-specific tokens (light) */
-  --bg: oklch(0.98 0.005 250); /* app 배경 */
-  --bg-elev: oklch(1 0 0); /* 카드/시트 */
-  --text: oklch(0.18 0.02 250); /* 본문 */
-  --text-sub: oklch(0.55 0.015 250); /* 보조 텍스트 ≈ #5C6678 */
+  /* Nudg-specific tokens (Lake Blue) */
+  --bg: oklch(0.97 0.008 240); /* ≈ #F5F8FB misty morning water */
+  --bg-elev: oklch(1 0 0); /* #FFFFFF lifted card */
+  --text: oklch(0.30 0.025 235); /* ≈ #24323D slate blue body */
+  --text-sub: oklch(0.55 0.02 235); /* secondary text ≈ #6A7A8A */
 
-  --brand: oklch(0.63 0.14 255); /* #3E6CFF */
-  --brand-strong: oklch(0.56 0.17 255); /* ≈ #2E5BFF (호버/프레스) */
+  --brand: oklch(0.40 0.08 230); /* ≈ #0B5C7A Lake Deep */
+  --brand-strong: oklch(0.34 0.085 230); /* pressed/hover — deeper lake */
 
-  --success: oklch(0.75 0.15 160); /* ≈ #35B87A */
-  --warn: oklch(0.84 0.14 80); /* ≈ #F6B64E */
-  --danger: oklch(0.72 0.18 20); /* ≈ #E85C6B */
+  --success: oklch(0.72 0.09 180); /* desaturated teal — harmonizes with lake */
+  --warn: oklch(0.82 0.1 80);
+  --danger: oklch(0.72 0.18 20);
 
-  /* Planner grid: 눈부심 줄인 밝은 그레이 */
-  --grid-hour: oklch(0.92 0.01 250); /* ≈ #E8EDF5 */
-  --grid-quarter: oklch(0.96 0.005 250); /* ≈ #F3F6FB */
+  /* Planner grid: cool blue-gray */
+  --grid-hour: oklch(0.87 0.022 230); /* surface-container-highest */
+  --grid-quarter: oklch(0.94 0.012 235); /* surface-container-low */
 
-  /* Charts (라이트용 5색) */
-  --chart-1: oklch(0.646 0.222 41.116); /* 블루 */
-  --chart-2: oklch(0.6 0.118 184.704); /* 그린 */
-  --chart-3: oklch(0.398 0.07 227.392); /* 옐로–오렌지 */
-  --chart-4: oklch(0.828 0.189 84.429); /* 퍼플 */
-  --chart-5: oklch(0.769 0.188 70.08); /* 코럴 */
+  /* Charts (lake-themed palette) */
+  --chart-1: oklch(0.40 0.08 230); /* lake deep */
+  --chart-2: oklch(0.60 0.07 225); /* mid water */
+  --chart-3: oklch(0.82 0.05 225); /* sky reflection */
+  --chart-4: oklch(0.72 0.08 260); /* dusty blue */
+  --chart-5: oklch(0.87 0.045 225); /* shallow mist */
 
-  /* Sidebar (라이트) */
-  --sidebar: oklch(0.985 0 0); /* 거의 흰 배경 */
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Sidebar */
+  --sidebar: oklch(0.97 0.008 240);
+  --sidebar-foreground: oklch(0.30 0.025 235);
+  --sidebar-primary: oklch(0.40 0.08 230);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.94 0.012 235);
+  --sidebar-accent-foreground: oklch(0.30 0.025 235);
+  --sidebar-border: oklch(0.87 0.022 230);
+  --sidebar-ring: oklch(0.40 0.08 230);
+  --background: oklch(0.97 0.008 240);
+  --foreground: oklch(0.30 0.025 235);
 }
 
 @theme inline {

@@ -18,12 +18,15 @@ const formatTime = (iso: string) => {
 }
 
 const MOOD_PRESETS = [
-  { mood: "안도", emoji: "😊", moodBg: "#cce8e4", moodText: "#3d5653" },
+  { mood: "안도", emoji: "😊", moodBg: "#d5e4ee", moodText: "#3d4e58" },
   { mood: "기쁨", emoji: "😄", moodBg: "#fef9c3", moodText: "#854d0e" },
-  { mood: "압도됨", emoji: "🌊", moodBg: "#b7e7ff", moodText: "#24566a" },
+  { mood: "압도됨", emoji: "🌊", moodBg: "#a8cfe3", moodText: "#24566a" },
   { mood: "불안", emoji: "😰", moodBg: "#fce7f3", moodText: "#9d174d" },
-  { mood: "안정됨", emoji: "🧘", moodBg: "#e1eae8", moodText: "#2a3433" },
+  { mood: "안정됨", emoji: "🧘", moodBg: "#cfdce6", moodText: "#24323d" },
   { mood: "피곤함", emoji: "😴", moodBg: "#f3e8ff", moodText: "#6b21a8" },
+  { mood: "우울", emoji: "🌧️", moodBg: "#dbeafe", moodText: "#1e40af" },
+  { mood: "슬픔", emoji: "😢", moodBg: "#e0e7ff", moodText: "#3730a3" },
+  { mood: "무기력함", emoji: "🪫", moodBg: "#f1f5f9", moodText: "#475569" },
 ]
 
 export default function CBTPage() {
@@ -37,8 +40,8 @@ export default function CBTPage() {
   const [form, setForm] = useState<CreateCBTEntryRequest>({
     emoji: "😊",
     mood: "안도",
-    moodBg: "#cce8e4",
-    moodText: "#3d5653",
+    moodBg: "#d5e4ee",
+    moodText: "#3d4e58",
     content: "",
     tags: [],
   })
@@ -85,7 +88,7 @@ export default function CBTPage() {
     try {
       await cbtApi.create(form)
       setQuickRecordOpen(false)
-      setForm({ emoji: "😊", mood: "안도", moodBg: "#cce8e4", moodText: "#3d5653", content: "", tags: [] })
+      setForm({ emoji: "😊", mood: "안도", moodBg: "#d5e4ee", moodText: "#3d4e58", content: "", tags: [] })
       setTagInput("")
       setPage(1)
       fetchEntries(1)
@@ -99,12 +102,12 @@ export default function CBTPage() {
   const hasMore = entries.length < total
 
   return (
-    <div className="min-h-screen bg-[#f6faf8] text-[#2a3433] flex">
+    <div className="min-h-screen bg-[#f5f8fb] text-[#24323d] flex">
       <AppSidebar />
 
       <main className="flex-1 md:ml-72 flex flex-col min-h-screen">
         <header className="hidden md:flex justify-end items-center px-8 pt-6 pb-4">
-          <button className="p-2 rounded-full hover:bg-[#eef5f3] transition-colors">
+          <button className="p-2 rounded-full hover:bg-[#e8eff5] transition-colors">
             <span className="material-symbols-outlined text-2xl">notifications</span>
           </button>
         </header>
@@ -112,44 +115,44 @@ export default function CBTPage() {
         <div className="flex-1 px-4 md:px-12 py-6 md:py-8 max-w-4xl mx-auto w-full">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
             <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#2a3433] mb-2">감정 기록</h2>
-              <p className="text-lg text-[#56615f]">인지 여정을 부드럽게 기록해보세요.</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#24323d] mb-2">감정 기록</h2>
+              <p className="text-lg text-[#6a7a8a]">인지 여정을 부드럽게 기록해보세요.</p>
             </div>
             <button
               onClick={() => setQuickRecordOpen(true)}
-              className="py-4 px-8 rounded-xl bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] font-semibold hover:opacity-90 transition-opacity duration-300 flex items-center gap-2 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] self-start md:self-auto"
+              className="py-4 px-8 rounded-xl bg-[#0b5c7a] text-[#ffffff] font-semibold hover:opacity-90 transition-opacity duration-300 flex items-center gap-2 shadow-[0px_12px_32px_rgba(36,50,61,0.06)] self-start md:self-auto"
             >
               <span className="material-symbols-outlined">edit_note</span>
               기록 추가
             </button>
           </div>
 
-          {loading && entries.length === 0 && <p className="text-[#56615f]">불러오는 중...</p>}
+          {loading && entries.length === 0 && <p className="text-[#6a7a8a]">불러오는 중...</p>}
           {!loading && entries.length === 0 && (
-            <p className="text-[#56615f] text-center py-16">아직 감정 기록이 없어요. 첫 기록을 남겨보세요!</p>
+            <p className="text-[#6a7a8a] text-center py-16">아직 감정 기록이 없어요. 첫 기록을 남겨보세요!</p>
           )}
 
-          <div className="relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:ml-[8.5rem] md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-[#e1eae8] before:to-transparent">
+          <div className="relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:ml-[8.5rem] md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-[#cfdce6] before:to-transparent">
             {entries.map((entry, index) => (
               <div key={entry.id} className={`relative flex items-start gap-6 md:gap-12 ${index < entries.length - 1 ? "mb-12" : ""}`}>
                 <div className="hidden md:block w-24 text-right pt-4 shrink-0">
-                  <span className="text-sm font-semibold text-[#56615f]">{formatTime(entry.createdAt)}</span>
+                  <span className="text-sm font-semibold text-[#6a7a8a]">{formatTime(entry.createdAt)}</span>
                 </div>
-                <div className="absolute left-0 md:relative md:left-auto flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-[0px_12px_32px_rgba(42,52,51,0.06)] ring-4 ring-[#f6faf8] z-10 shrink-0 text-xl">
+                <div className="absolute left-0 md:relative md:left-auto flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-[0px_12px_32px_rgba(36,50,61,0.06)] ring-4 ring-[#f5f8fb] z-10 shrink-0 text-xl">
                   {entry.emoji}
                 </div>
-                <div className="ml-14 md:ml-0 flex-1 bg-white rounded-xl p-6 shadow-[0px_12px_32px_rgba(42,52,51,0.06)] hover:bg-[#f6faf8]/80 transition-colors duration-300 group">
+                <div className="ml-14 md:ml-0 flex-1 bg-white rounded-xl p-6 shadow-[0px_12px_32px_rgba(36,50,61,0.06)] hover:bg-[#f5f8fb]/80 transition-colors duration-300 group">
                   <div className="flex items-center justify-between mb-3">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: entry.moodBg, color: entry.moodText }}>
                       {entry.mood}
                     </span>
-                    <span className="text-sm text-[#56615f] md:hidden">{formatTime(entry.createdAt)}</span>
+                    <span className="text-sm text-[#6a7a8a] md:hidden">{formatTime(entry.createdAt)}</span>
                   </div>
-                  <p className="text-[#2a3433] text-lg leading-relaxed">{entry.content}</p>
+                  <p className="text-[#24323d] text-lg leading-relaxed">{entry.content}</p>
                   {entry.tags && entry.tags.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-[#eef5f3] flex gap-2 flex-wrap">
+                    <div className="mt-4 pt-4 border-t border-[#e8eff5] flex gap-2 flex-wrap">
                       {entry.tags.map((tag) => (
-                        <span key={tag} className="text-xs text-[#56615f] bg-[#f6faf8] px-2 py-1 rounded-md">{tag}</span>
+                        <span key={tag} className="text-xs text-[#6a7a8a] bg-[#f5f8fb] px-2 py-1 rounded-md">{tag}</span>
                       ))}
                     </div>
                   )}
@@ -160,7 +163,7 @@ export default function CBTPage() {
 
           {hasMore && (
             <div className="mt-12 text-center">
-              <button onClick={handleLoadMore} className="text-[#006b64] font-medium hover:text-[#005e57] transition-colors duration-300">
+              <button onClick={handleLoadMore} className="text-[#0b5c7a] font-medium hover:text-[#083d52] transition-colors duration-300">
                 이전 기록 더 보기
               </button>
             </div>
@@ -171,17 +174,17 @@ export default function CBTPage() {
       <MobileNav />
 
       {quickRecordOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#d9e5e2]/40 backdrop-blur-md px-4">
-          <div className="bg-white rounded-[3rem] shadow-[0px_12px_32px_rgba(42,52,51,0.06)] p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#cfdce6]/40 backdrop-blur-md px-4">
+          <div className="bg-white rounded-[3rem] shadow-[0px_12px_32px_rgba(36,50,61,0.06)] p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-[#2a3433]">감정 기록하기</h3>
-              <button onClick={() => setQuickRecordOpen(false)} className="text-[#56615f] hover:text-[#2a3433] p-2 rounded-full hover:bg-[#eef5f3] transition-colors">
+              <h3 className="text-2xl font-bold text-[#24323d]">감정 기록하기</h3>
+              <button onClick={() => setQuickRecordOpen(false)} className="text-[#6a7a8a] hover:text-[#24323d] p-2 rounded-full hover:bg-[#e8eff5] transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             {/* 감정 선택 */}
-            <p className="text-sm font-semibold text-[#56615f] mb-3">지금 기분이 어때요?</p>
+            <p className="text-sm font-semibold text-[#6a7a8a] mb-3">지금 기분이 어때요?</p>
             <div className="grid grid-cols-3 gap-2 mb-6">
               {MOOD_PRESETS.map((preset) => (
                 <button
@@ -189,8 +192,8 @@ export default function CBTPage() {
                   onClick={() => handleMoodSelect(preset)}
                   className={`flex flex-col items-center gap-1 p-3 rounded-xl text-sm font-medium transition-all ${
                     form.mood === preset.mood
-                      ? "ring-2 ring-[#006b64] scale-95"
-                      : "hover:bg-[#f6faf8]"
+                      ? "ring-2 ring-[#0b5c7a] scale-95"
+                      : "hover:bg-[#f5f8fb]"
                   }`}
                   style={form.mood === preset.mood ? { backgroundColor: preset.moodBg, color: preset.moodText } : {}}
                 >
@@ -202,7 +205,7 @@ export default function CBTPage() {
 
             {/* 내용 */}
             <textarea
-              className="w-full bg-[#eef5f3] rounded-xl p-4 text-[#2a3433] placeholder:text-[#a9b4b2] border-none outline-none focus:ring-2 focus:ring-[#006b64]/20 resize-none mb-4"
+              className="w-full bg-[#e8eff5] rounded-xl p-4 text-[#24323d] placeholder:text-[#a8b4bf] border-none outline-none focus:ring-2 focus:ring-[#0b5c7a]/20 resize-none mb-4"
               rows={4}
               placeholder="오늘 어떤 감정을 느끼셨나요?"
               value={form.content}
@@ -212,20 +215,20 @@ export default function CBTPage() {
             {/* 태그 */}
             <div className="flex gap-2 mb-2">
               <input
-                className="flex-1 bg-[#f6faf8] rounded-xl px-4 py-2 text-sm text-[#2a3433] placeholder:text-[#a9b4b2] outline-none focus:ring-2 focus:ring-[#006b64]/20"
+                className="flex-1 bg-[#f5f8fb] rounded-xl px-4 py-2 text-sm text-[#24323d] placeholder:text-[#a8b4bf] outline-none focus:ring-2 focus:ring-[#0b5c7a]/20"
                 placeholder="태그 추가 (Enter)"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleTagAdd()}
               />
-              <button onClick={handleTagAdd} className="px-3 py-2 rounded-xl bg-[#eef5f3] text-[#56615f] text-sm font-medium hover:bg-[#e7f0ed] transition-colors">
+              <button onClick={handleTagAdd} className="px-3 py-2 rounded-xl bg-[#e8eff5] text-[#6a7a8a] text-sm font-medium hover:bg-[#e8eff5] transition-colors">
                 추가
               </button>
             </div>
             {form.tags && form.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {form.tags.map((tag) => (
-                  <span key={tag} className="flex items-center gap-1 text-xs text-[#56615f] bg-[#f6faf8] px-2 py-1 rounded-md">
+                  <span key={tag} className="flex items-center gap-1 text-xs text-[#6a7a8a] bg-[#f5f8fb] px-2 py-1 rounded-md">
                     {tag}
                     <button onClick={() => handleTagRemove(tag)} className="hover:text-[#a83836]">×</button>
                   </span>
@@ -234,11 +237,11 @@ export default function CBTPage() {
             )}
 
             <div className="flex justify-end gap-3 mt-4">
-              <button onClick={() => setQuickRecordOpen(false)} className="px-6 py-3 rounded-full text-[#56615f] font-semibold hover:bg-[#eef5f3] transition-colors">취소</button>
+              <button onClick={() => setQuickRecordOpen(false)} className="px-6 py-3 rounded-full text-[#6a7a8a] font-semibold hover:bg-[#e8eff5] transition-colors">취소</button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting || !form.content.trim()}
-                className="px-8 py-3 rounded-full bg-gradient-to-br from-[#006b64] to-[#7fe6db] text-[#e2fffa] font-bold shadow-[0px_8px_24px_rgba(0,107,100,0.15)] hover:shadow-[0px_12px_32px_rgba(0,107,100,0.2)] transition-all duration-300 disabled:opacity-50"
+                className="px-8 py-3 rounded-full bg-[#0b5c7a] text-[#ffffff] font-bold shadow-[0px_8px_24px_rgba(11,92,122,0.15)] hover:shadow-[0px_12px_32px_rgba(11,92,122,0.2)] transition-all duration-300 disabled:opacity-50"
               >
                 {submitting ? "저장 중..." : "저장"}
               </button>

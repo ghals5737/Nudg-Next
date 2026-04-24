@@ -134,6 +134,7 @@ export interface SignupRequest {
 export interface AuthResponse {
   user: User
   accessToken: string
+  refreshToken: string
 }
 
 // Goals
