@@ -16,68 +16,68 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Nudg light theme — Lake Blue Sanctuary (see design_system/serene_focus/DESIGN.md) */
-  --card: oklch(1 0 0); /* #FFFFFF lifted card */
-  --card-foreground: oklch(0.30 0.025 235); /* #24323D slate blue */
+  /* Nudg light theme — Calm Single-Point: neutral cool gray + one sky blue accent */
+  --card: oklch(1 0 0); /* #FFFFFF surface */
+  --card-foreground: oklch(0.21 0.03 260); /* #1F2937 text */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.30 0.025 235);
+  --popover-foreground: oklch(0.21 0.03 260);
 
-  /* Brand: Lake Blue — deep, low-chroma, still-water feel */
-  --primary: oklch(0.40 0.08 230); /* ≈ #0B5C7A Lake Deep */
-  --primary-foreground: oklch(1 0 0); /* #FFFFFF */
-  --secondary: oklch(0.91 0.025 230); /* ≈ #D5E4EE shallow water */
-  --secondary-foreground: oklch(0.30 0.025 235);
+  /* Brand: single sky blue accent — used sparingly */
+  --primary: oklch(0.58 0.18 254); /* ≈ #1F76EB accent */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.02 250); /* ≈ #E8F0FC accent soft */
+  --secondary-foreground: oklch(0.21 0.03 260);
 
-  --muted: oklch(0.94 0.012 235); /* ≈ #E8EFF5 surface-container-low */
-  --muted-foreground: oklch(0.55 0.02 235); /* cool slate ≈ #6A7A8A */
-  --accent: oklch(0.82 0.05 225); /* ≈ #A8CFE3 sky reflection */
-  --accent-foreground: oklch(0.30 0.025 235);
+  --muted: oklch(0.94 0.005 260); /* ≈ #EEF1F5 bg */
+  --muted-foreground: oklch(0.51 0.02 260); /* ≈ #6B7280 muted */
+  --accent: oklch(0.95 0.02 250); /* ≈ #E8F0FC accent soft */
+  --accent-foreground: oklch(0.58 0.18 254);
 
-  --destructive: oklch(0.577 0.245 27.325); /* ≈ #E85C6B */
+  --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.87 0.022 230); /* ≈ #CFDCE6 ghost border */
-  --input: oklch(0.87 0.022 230);
-  --ring: oklch(0.40 0.08 230); /* Lake Deep focus ring */
+  --border: oklch(0.91 0.008 260); /* ≈ #E4E9F0 */
+  --input: oklch(0.91 0.008 260);
+  --ring: oklch(0.58 0.18 254);
 
   /* Radius */
   --radius: 0.625rem;
 
-  /* Nudg-specific tokens (Lake Blue) */
-  --bg: oklch(0.97 0.008 240); /* ≈ #F5F8FB misty morning water */
-  --bg-elev: oklch(1 0 0); /* #FFFFFF lifted card */
-  --text: oklch(0.30 0.025 235); /* ≈ #24323D slate blue body */
-  --text-sub: oklch(0.55 0.02 235); /* secondary text ≈ #6A7A8A */
+  /* Nudg-specific tokens */
+  --bg: oklch(0.94 0.005 260); /* ≈ #EEF1F5 */
+  --bg-elev: oklch(1 0 0); /* #FFFFFF */
+  --text: oklch(0.21 0.03 260); /* ≈ #1F2937 */
+  --text-sub: oklch(0.51 0.02 260); /* ≈ #6B7280 */
 
-  --brand: oklch(0.40 0.08 230); /* ≈ #0B5C7A Lake Deep */
-  --brand-strong: oklch(0.34 0.085 230); /* pressed/hover — deeper lake */
+  --brand: oklch(0.58 0.18 254); /* ≈ #1F76EB */
+  --brand-strong: oklch(0.52 0.19 254); /* pressed/hover */
 
-  --success: oklch(0.72 0.09 180); /* desaturated teal — harmonizes with lake */
+  --success: oklch(0.65 0.14 160);
   --warn: oklch(0.82 0.1 80);
   --danger: oklch(0.72 0.18 20);
 
-  /* Planner grid: cool blue-gray */
-  --grid-hour: oklch(0.87 0.022 230); /* surface-container-highest */
-  --grid-quarter: oklch(0.94 0.012 235); /* surface-container-low */
+  /* Planner grid */
+  --grid-hour: oklch(0.91 0.008 260); /* border */
+  --grid-quarter: oklch(0.96 0.004 260); /* lighter than bg */
 
-  /* Charts (lake-themed palette) */
-  --chart-1: oklch(0.40 0.08 230); /* lake deep */
-  --chart-2: oklch(0.60 0.07 225); /* mid water */
-  --chart-3: oklch(0.82 0.05 225); /* sky reflection */
-  --chart-4: oklch(0.72 0.08 260); /* dusty blue */
-  --chart-5: oklch(0.87 0.045 225); /* shallow mist */
+  /* Charts (anchored on sky blue + neutrals) */
+  --chart-1: oklch(0.58 0.18 254); /* sky blue */
+  --chart-2: oklch(0.70 0.10 254); /* lighter blue */
+  --chart-3: oklch(0.51 0.02 260); /* muted */
+  --chart-4: oklch(0.78 0.05 254); /* very light blue */
+  --chart-5: oklch(0.91 0.008 260); /* near-border */
 
   /* Sidebar */
-  --sidebar: oklch(0.97 0.008 240);
-  --sidebar-foreground: oklch(0.30 0.025 235);
-  --sidebar-primary: oklch(0.40 0.08 230);
+  --sidebar: oklch(0.94 0.005 260);
+  --sidebar-foreground: oklch(0.21 0.03 260);
+  --sidebar-primary: oklch(0.58 0.18 254);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.94 0.012 235);
-  --sidebar-accent-foreground: oklch(0.30 0.025 235);
-  --sidebar-border: oklch(0.87 0.022 230);
-  --sidebar-ring: oklch(0.40 0.08 230);
-  --background: oklch(0.97 0.008 240);
-  --foreground: oklch(0.30 0.025 235);
+  --sidebar-accent: oklch(0.95 0.02 250);
+  --sidebar-accent-foreground: oklch(0.58 0.18 254);
+  --sidebar-border: oklch(0.91 0.008 260);
+  --sidebar-ring: oklch(0.58 0.18 254);
+  --background: oklch(0.94 0.005 260);
+  --foreground: oklch(0.21 0.03 260);
 }
 
 @theme inline {

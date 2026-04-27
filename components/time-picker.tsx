@@ -54,23 +54,23 @@ export function TimePicker({ value, onChange, open, onOpenChange }: TimePickerPr
       <button
         type="button"
         onClick={() => onOpenChange(!open)}
-        className={`w-full bg-white rounded-xl px-6 py-5 text-lg text-[#24323d] text-left transition-all duration-300 outline-none ${
+        className={`w-full bg-white rounded-xl px-6 py-5 text-lg text-[#1F2937] text-left transition-all duration-300 outline-none ${
           open
-            ? "shadow-[inset_0_0_0_2px_#0b5c7a]"
-            : "shadow-[inset_0_0_0_2px_rgba(11,92,122,0.12)] hover:shadow-[inset_0_0_0_2px_rgba(11,92,122,0.3)]"
+            ? "shadow-[inset_0_0_0_2px_#1F76EB]"
+            : "shadow-[inset_0_0_0_2px_rgba(31,118,235,0.12)] hover:shadow-[inset_0_0_0_2px_rgba(31,118,235,0.3)]"
         }`}
       >
         <span className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-lg text-[#6a7a8a]">schedule</span>
+          <span className="material-symbols-outlined text-lg text-[#6B7280]">schedule</span>
           {displayTime}
         </span>
       </button>
 
       {open && (
-        <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white rounded-2xl shadow-[0px_12px_32px_rgba(36,50,61,0.12)] z-50 overflow-hidden">
+        <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white rounded-2xl shadow-[0px_12px_32px_rgba(31,41,55,0.12)] z-50 overflow-hidden">
           <div className="flex">
             {/* 오전 / 오후 */}
-            <div className="flex flex-col gap-0 border-r border-[#e8eff5] px-3 py-3 justify-start">
+            <div className="flex flex-col gap-0 border-r border-[#EEF1F5] px-3 py-3 justify-start">
               {(["오전", "오후"] as const).map((label, i) => {
                 const selected = i === 0 ? !isPM : isPM
                 return (
@@ -80,8 +80,8 @@ export function TimePicker({ value, onChange, open, onOpenChange }: TimePickerPr
                     onClick={() => set(h12, i === 1, m)}
                     className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap ${
                       selected
-                        ? "bg-[#0b5c7a] text-white"
-                        : "text-[#6a7a8a] hover:bg-[#e8eff5]"
+                        ? "bg-[#1F76EB] text-white"
+                        : "text-[#6B7280] hover:bg-[#EEF1F5]"
                     }`}
                   >
                     {label}
@@ -93,7 +93,7 @@ export function TimePicker({ value, onChange, open, onOpenChange }: TimePickerPr
             {/* 시 */}
             <div
               ref={hourRef}
-              className="flex-1 flex flex-col gap-0.5 max-h-56 overflow-y-auto py-3 px-2 scrollbar-hide border-r border-[#e8eff5]"
+              className="flex-1 flex flex-col gap-0.5 max-h-56 overflow-y-auto py-3 px-2 scrollbar-hide border-r border-[#EEF1F5]"
             >
               {HOURS.map((h) => (
                 <button
@@ -102,8 +102,8 @@ export function TimePicker({ value, onChange, open, onOpenChange }: TimePickerPr
                   onClick={() => set(h, isPM, m)}
                   className={`py-2.5 px-3 rounded-xl text-sm font-medium transition-all duration-300 text-center ${
                     h === h12
-                      ? "bg-[#0b5c7a] text-white font-bold"
-                      : "text-[#6a7a8a] hover:bg-[#e8eff5]"
+                      ? "bg-[#1F76EB] text-white font-bold"
+                      : "text-[#6B7280] hover:bg-[#EEF1F5]"
                   }`}
                 >
                   {h.toString().padStart(2, "0")}
@@ -123,8 +123,8 @@ export function TimePicker({ value, onChange, open, onOpenChange }: TimePickerPr
                   onClick={() => set(h12, isPM, min)}
                   className={`py-2.5 px-3 rounded-xl text-sm font-medium transition-all duration-300 text-center ${
                     min === m || (MINUTES.indexOf(m) < 0 && min === 0)
-                      ? "bg-[#0b5c7a] text-white font-bold"
-                      : "text-[#6a7a8a] hover:bg-[#e8eff5]"
+                      ? "bg-[#1F76EB] text-white font-bold"
+                      : "text-[#6B7280] hover:bg-[#EEF1F5]"
                   }`}
                 >
                   {min.toString().padStart(2, "0")}

@@ -77,13 +77,13 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent showCloseButton={false} className="bg-white/90 backdrop-blur-3xl sm:max-w-2xl rounded-[2rem] shadow-[0px_12px_32px_rgba(36,50,61,0.06)] p-8 md:p-12 border border-[#a8b4bf]/15 gap-0">
+      <DialogContent showCloseButton={false} className="bg-white/90 backdrop-blur-3xl sm:max-w-2xl rounded-[2rem] shadow-[0px_12px_32px_rgba(31,41,55,0.06)] p-8 md:p-12 border border-[#6B7280]/15 gap-0">
         <div className="flex justify-between items-center mb-10">
           <div>
-            <DialogTitle className="text-3xl font-bold tracking-tight text-[#24323d]">새 블록</DialogTitle>
-            <p className="text-[#6a7a8a] mt-2 text-sm">집중 세션을 추가하세요.</p>
+            <DialogTitle className="text-3xl font-bold tracking-tight text-[#1F2937]">새 블록</DialogTitle>
+            <p className="text-[#6B7280] mt-2 text-sm">집중 세션을 추가하세요.</p>
           </div>
-          <button onClick={handleClose} className="w-12 h-12 rounded-full bg-[#e8eff5] flex items-center justify-center text-[#6a7a8a] hover:bg-[#cfdce6] transition-colors">
+          <button onClick={handleClose} className="w-12 h-12 rounded-full bg-[#EEF1F5] flex items-center justify-center text-[#6B7280] hover:bg-[#E4E9F0] transition-colors">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -98,9 +98,9 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
         <div className="flex flex-col gap-8">
           {/* 제목 */}
           <section className="flex flex-col gap-4">
-            <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider">무엇에 집중하나요?</label>
+            <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">무엇에 집중하나요?</label>
             <input
-              className="w-full bg-[#e8eff5]/50 text-2xl md:text-4xl font-bold text-[#24323d] placeholder:text-[#a8b4bf]/60 rounded-xl p-6 outline-none focus:ring-2 focus:ring-[#0b5c7a]/20 border-none"
+              className="w-full bg-[#EEF1F5]/50 text-2xl md:text-4xl font-bold text-[#1F2937] placeholder:text-[#6B7280]/60 rounded-xl p-6 outline-none focus:ring-2 focus:ring-[#1F76EB]/20 border-none"
               placeholder="예: 디자인 시스템 검토"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -109,7 +109,7 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
 
           {/* 시작 시간 */}
           <section className="flex flex-col gap-4">
-            <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider flex items-center gap-2">
+            <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">schedule</span>
               시작 시간
             </label>
@@ -123,7 +123,7 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
 
           {/* 소요 시간 */}
           <section className="flex flex-col gap-4">
-            <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider flex items-center gap-2">
+            <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">timer</span>
               소요 시간
             </label>
@@ -131,7 +131,7 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
               {durations.map((d) => (
                 <label key={d.value} className="cursor-pointer">
                   <input type="radio" name="duration" value={d.value} checked={durationMin === d.value} onChange={() => setDurationMin(d.value)} className="sr-only" />
-                  <div className={`px-6 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 ${durationMin === d.value ? "bg-[#d5e4ee] text-[#3d4e58]" : "bg-[#e8eff5] text-[#6a7a8a] hover:bg-[#cfdce6]"}`}>
+                  <div className={`px-6 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 ${durationMin === d.value ? "bg-[#E8F0FC] text-[#1F2937]" : "bg-[#EEF1F5] text-[#6B7280] hover:bg-[#E4E9F0]"}`}>
                     {d.label}
                   </div>
                 </label>
@@ -143,23 +143,23 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
                   type="number"
                   min={5}
                   max={480}
-                  className="w-32 bg-[#e8eff5] rounded-xl px-4 py-3 text-lg text-[#24323d] outline-none focus:ring-2 focus:ring-[#0b5c7a]/20 border-none"
+                  className="w-32 bg-[#EEF1F5] rounded-xl px-4 py-3 text-lg text-[#1F2937] outline-none focus:ring-2 focus:ring-[#1F76EB]/20 border-none"
                   value={customDuration}
                   onChange={(e) => setCustomDuration(Number(e.target.value))}
                 />
-                <span className="text-[#6a7a8a]">분</span>
+                <span className="text-[#6B7280]">분</span>
               </div>
             )}
           </section>
 
           {/* 장소 */}
           <section className="flex flex-col gap-4">
-            <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider flex items-center gap-2">
+            <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">location_on</span>
               장소 (선택)
             </label>
             <input
-              className="w-full bg-[#e8eff5]/50 rounded-xl px-6 py-4 text-base text-[#24323d] placeholder:text-[#a8b4bf] outline-none focus:ring-2 focus:ring-[#0b5c7a]/20 border-none"
+              className="w-full bg-[#EEF1F5]/50 rounded-xl px-6 py-4 text-base text-[#1F2937] placeholder:text-[#6B7280] outline-none focus:ring-2 focus:ring-[#1F76EB]/20 border-none"
               placeholder="예: 홈 오피스, Google Meet"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
@@ -168,7 +168,7 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
 
           {/* 태그 */}
           <section className="flex flex-col gap-4">
-            <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider flex items-center gap-2">
+            <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">sell</span>
               태그
             </label>
@@ -180,8 +180,8 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
                   onClick={() => setSelectedTag(tag)}
                   className={`px-5 py-2.5 rounded-full font-medium text-sm transition-colors duration-300 ${
                     selectedTag === tag
-                      ? "bg-[#a8cfe3]/50 text-[#24566a] border border-[#a8cfe3]"
-                      : "bg-[#e8eff5] text-[#6a7a8a] hover:bg-[#cfdce6]"
+                      ? "bg-[#E8F0FC]/50 text-[#24566a] border border-[#E8F0FC]"
+                      : "bg-[#EEF1F5] text-[#6B7280] hover:bg-[#E4E9F0]"
                   }`}
                 >
                   {tag}
@@ -190,14 +190,14 @@ export function NewScheduleDialog({ open, onOpenChange, date, onSuccess }: NewSc
             </div>
           </section>
 
-          <div className="flex justify-end gap-4 pt-4 border-t border-[#e8eff5]">
-            <button onClick={handleClose} className="px-8 py-4 rounded-xl text-[#6a7a8a] font-semibold hover:bg-[#e8eff5] transition-colors">
+          <div className="flex justify-end gap-4 pt-4 border-t border-[#EEF1F5]">
+            <button onClick={handleClose} className="px-8 py-4 rounded-xl text-[#6B7280] font-semibold hover:bg-[#EEF1F5] transition-colors">
               취소
             </button>
             <button
               onClick={handleSubmit}
               disabled={!title.trim() || submitting}
-              className="px-10 py-4 rounded-xl text-[#ffffff] font-bold text-lg hover:opacity-90 shadow-sm transition-all bg-[#0b5c7a] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-10 py-4 rounded-xl text-[#ffffff] font-bold text-lg hover:opacity-90 shadow-sm transition-all bg-[#1F76EB] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "저장 중..." : "블록 추가"}
             </button>

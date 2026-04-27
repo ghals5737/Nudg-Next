@@ -26,7 +26,7 @@ export function MobileNav() {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center gap-1 p-2 transition-colors",
-                  isActive ? "text-[#0b5c7a]" : "text-[#6a7a8a]"
+                  isActive ? "text-[#1F76EB]" : "text-[#6B7280]"
                 )}
               >
                 <span

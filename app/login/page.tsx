@@ -47,38 +47,38 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f8fb] flex items-center justify-center px-4 selection:bg-[#b8dcec] selection:text-[#00534d]">
+    <div className="min-h-screen bg-[#EEF1F5] flex items-center justify-center px-4 selection:bg-[#E8F0FC] selection:text-[#00534d]">
 
       {/* 배경 블러 오브 */}
-      <div className="pointer-events-none fixed -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-[#b8dcec] opacity-10 blur-[100px]" />
-      <div className="pointer-events-none fixed -bottom-32 -right-32 w-[400px] h-[400px] rounded-full bg-[#0b5c7a] opacity-10 blur-[120px]" />
+      <div className="pointer-events-none fixed -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-[#E8F0FC] opacity-10 blur-[100px]" />
+      <div className="pointer-events-none fixed -bottom-32 -right-32 w-[400px] h-[400px] rounded-full bg-[#1F76EB] opacity-10 blur-[120px]" />
 
       <div className="relative w-full max-w-md">
 
         {/* 로고 */}
         <div className="flex flex-col items-center mb-10">
-          <div className="w-14 h-14 rounded-2xl bg-[#0b5c7a] flex items-center justify-center shadow-[0px_12px_32px_rgba(11,92,122,0.25)] mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#1F76EB] flex items-center justify-center shadow-[0px_12px_32px_rgba(31,118,235,0.25)] mb-4">
             <span className="material-symbols-outlined text-3xl text-[#ffffff]" style={{ fontVariationSettings: "'FILL' 1" }}>
               self_improvement
             </span>
           </div>
-          <h1 className="text-3xl font-extrabold text-[#24323d] tracking-tight">Nudg</h1>
-          <p className="text-[#6a7a8a] mt-1 text-sm">하루를 부드럽게 이어가세요</p>
+          <h1 className="text-3xl font-extrabold text-[#1F2937] tracking-tight">Nudg</h1>
+          <p className="text-[#6B7280] mt-1 text-sm">하루를 부드럽게 이어가세요</p>
         </div>
 
         {/* 카드 */}
-        <div className="bg-white rounded-[2rem] shadow-[0px_24px_64px_rgba(36,50,61,0.08)] p-8">
+        <div className="bg-white rounded-[2rem] shadow-[0px_24px_64px_rgba(31,41,55,0.08)] p-8">
 
           {/* 탭 */}
-          <div className="flex bg-[#e8eff5] rounded-xl p-1 mb-8">
+          <div className="flex bg-[#EEF1F5] rounded-xl p-1 mb-8">
             {(["login", "signup"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
                 className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
                   mode === m
-                    ? "bg-white text-[#0b5c7a] shadow-[0px_4px_12px_rgba(36,50,61,0.08)]"
-                    : "text-[#6a7a8a] hover:text-[#24323d]"
+                    ? "bg-white text-[#1F76EB] shadow-[0px_4px_12px_rgba(31,41,55,0.08)]"
+                    : "text-[#6B7280] hover:text-[#1F2937]"
                 }`}
               >
                 {m === "login" ? "로그인" : "회원가입"}
@@ -98,16 +98,16 @@ export default function LoginPage() {
             {/* 이름 (회원가입만) */}
             {mode === "signup" && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider">이름</label>
-                <div className="flex items-center gap-3 bg-[#f5f8fb] rounded-xl px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#0b5c7a]/20 transition-all">
-                  <span className="material-symbols-outlined text-xl text-[#a8b4bf]">person</span>
+                <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">이름</label>
+                <div className="flex items-center gap-3 bg-[#EEF1F5] rounded-xl px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#1F76EB]/20 transition-all">
+                  <span className="material-symbols-outlined text-xl text-[#6B7280]">person</span>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="홍길동"
                     required
-                    className="flex-1 bg-transparent text-[#24323d] placeholder:text-[#a8b4bf] text-base outline-none"
+                    className="flex-1 bg-transparent text-[#1F2937] placeholder:text-[#6B7280] text-base outline-none"
                   />
                 </div>
               </div>
@@ -115,16 +115,16 @@ export default function LoginPage() {
 
             {/* 이메일 */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider">이메일</label>
-              <div className="flex items-center gap-3 bg-[#f5f8fb] rounded-xl px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#0b5c7a]/20 transition-all">
-                <span className="material-symbols-outlined text-xl text-[#a8b4bf]">mail</span>
+              <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">이메일</label>
+              <div className="flex items-center gap-3 bg-[#EEF1F5] rounded-xl px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#1F76EB]/20 transition-all">
+                <span className="material-symbols-outlined text-xl text-[#6B7280]">mail</span>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="hello@example.com"
                   required
-                  className="flex-1 bg-transparent text-[#24323d] placeholder:text-[#a8b4bf] text-base outline-none"
+                  className="flex-1 bg-transparent text-[#1F2937] placeholder:text-[#6B7280] text-base outline-none"
                 />
               </div>
             </div>
@@ -132,15 +132,15 @@ export default function LoginPage() {
             {/* 비밀번호 */}
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-semibold text-[#6a7a8a] uppercase tracking-wider">비밀번호</label>
+                <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">비밀번호</label>
                 {mode === "login" && (
-                  <button type="button" className="text-xs text-[#0b5c7a] hover:text-[#083d52] font-medium transition-colors">
+                  <button type="button" className="text-xs text-[#1F76EB] hover:text-[#1F76EB] font-medium transition-colors">
                     비밀번호 찾기
                   </button>
                 )}
               </div>
-              <div className="flex items-center gap-3 bg-[#f5f8fb] rounded-xl px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#0b5c7a]/20 transition-all">
-                <span className="material-symbols-outlined text-xl text-[#a8b4bf]">lock</span>
+              <div className="flex items-center gap-3 bg-[#EEF1F5] rounded-xl px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#1F76EB]/20 transition-all">
+                <span className="material-symbols-outlined text-xl text-[#6B7280]">lock</span>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -148,12 +148,12 @@ export default function LoginPage() {
                   placeholder="8자 이상"
                   required
                   minLength={8}
-                  className="flex-1 bg-transparent text-[#24323d] placeholder:text-[#a8b4bf] text-base outline-none"
+                  className="flex-1 bg-transparent text-[#1F2937] placeholder:text-[#6B7280] text-base outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-[#a8b4bf] hover:text-[#6a7a8a] transition-colors"
+                  className="text-[#6B7280] hover:text-[#6B7280] transition-colors"
                 >
                   <span className="material-symbols-outlined text-xl">
                     {showPassword ? "visibility_off" : "visibility"}
@@ -166,7 +166,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full py-4 rounded-xl bg-[#0b5c7a] text-[#ffffff] font-bold text-base shadow-[0px_12px_32px_rgba(11,92,122,0.2)] hover:shadow-[0px_16px_40px_rgba(11,92,122,0.28)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 flex items-center justify-center gap-2"
+              className="mt-2 w-full py-4 rounded-xl bg-[#1F76EB] text-[#ffffff] font-bold text-base shadow-[0px_12px_32px_rgba(31,118,235,0.2)] hover:shadow-[0px_16px_40px_rgba(31,118,235,0.28)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -184,16 +184,16 @@ export default function LoginPage() {
 
           {/* 구분선 */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-[#e8eff5]" />
-            <span className="text-xs text-[#a8b4bf] font-medium">또는</span>
-            <div className="flex-1 h-px bg-[#e8eff5]" />
+            <div className="flex-1 h-px bg-[#EEF1F5]" />
+            <span className="text-xs text-[#6B7280] font-medium">또는</span>
+            <div className="flex-1 h-px bg-[#EEF1F5]" />
           </div>
 
           {/* 소셜 로그인 */}
           <button
             type="button"
             onClick={() => { window.location.href = "/api/oauth2/authorization/google" }}
-            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-[#e8eff5] bg-white hover:bg-[#f5f8fb] text-[#24323d] font-semibold text-sm transition-colors duration-300"
+            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-[#EEF1F5] bg-white hover:bg-[#EEF1F5] text-[#1F2937] font-semibold text-sm transition-colors duration-300"
           >
             <svg width="20" height="20" viewBox="0 0 48 48" fill="none">
               <path d="M43.6 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11c-.5 2.4-1.9 4.5-4 5.9v4.9h6.5c3.8-3.5 6.1-8.7 6.1-14.8z" fill="#4285F4"/>
@@ -206,13 +206,13 @@ export default function LoginPage() {
         </div>
 
         {/* 하단 텍스트 */}
-        <p className="text-center text-xs text-[#a8b4bf] mt-6 leading-relaxed">
+        <p className="text-center text-xs text-[#6B7280] mt-6 leading-relaxed">
           계속하면 Nudg의{" "}
-          <Link href="#" className="text-[#6a7a8a] underline underline-offset-2 hover:text-[#0b5c7a] transition-colors">
+          <Link href="#" className="text-[#6B7280] underline underline-offset-2 hover:text-[#1F76EB] transition-colors">
             서비스 약관
           </Link>
           {" "}및{" "}
-          <Link href="#" className="text-[#6a7a8a] underline underline-offset-2 hover:text-[#0b5c7a] transition-colors">
+          <Link href="#" className="text-[#6B7280] underline underline-offset-2 hover:text-[#1F76EB] transition-colors">
             개인정보처리방침
           </Link>
           에 동의하는 것으로 간주됩니다.
