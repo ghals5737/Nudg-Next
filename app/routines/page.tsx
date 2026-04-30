@@ -6,12 +6,21 @@ import { MobileNav } from "@/components/mobile-nav"
 import { NewRoutineDialog } from "@/components/new-routine-dialog"
 import { EditRoutineDialog } from "@/components/edit-routine-dialog"
 import { routinesApi } from "@/lib/api/routines"
-import type { RoutineWithRhythm } from "@/types/api"
+import type { RoutineWithRhythm, TodayRoutinesResponse } from "@/types/api"
 
 const dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
 
+const todayDateStr = () => {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = (d.getMonth() + 1).toString().padStart(2, "0")
+  const day = d.getDate().toString().padStart(2, "0")
+  return `${y}-${m}-${day}`
+}
+
 export default function RoutinesPage() {
   const [routines, setRoutines] = useState<RoutineWithRhythm[]>([])
+  const [today, setToday] = useState<TodayRoutinesResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [showNewRoutineDialog, setShowNewRoutineDialog] = useState(false)
   const [editingRoutine, setEditingRoutine] = useState<RoutineWithRhythm | null>(null)
@@ -23,11 +32,36 @@ export default function RoutinesPage() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { fetchRoutines() }, [])
+  const fetchToday = () => {
+    routinesApi.today()
+      .then((res) => setToday(res.data))
+      .catch(console.error)
+  }
+
+  useEffect(() => {
+    fetchRoutines()
+    fetchToday()
+  }, [])
 
   const toggleRoutine = async (id: string) => {
     await routinesApi.toggle(id)
     fetchRoutines()
+    fetchToday()
+  }
+
+  const toggleTodayCompletion = async (routineId: string, currentlyCompleted: boolean) => {
+    const date = todayDateStr()
+    try {
+      if (currentlyCompleted) {
+        await routinesApi.unlogCompletion(routineId, date)
+      } else {
+        await routinesApi.logCompletion(routineId, date)
+      }
+      fetchToday()
+      fetchRoutines() // 7일 리듬 갱신
+    } catch (err) {
+      console.error("루틴 체크 실패:", err)
+    }
   }
 
   return (
@@ -57,6 +91,62 @@ export default function RoutinesPage() {
           </div>
 
           {loading && <p className="text-[#6B7280]">불러오는 중...</p>}
+
+          {/* 오늘의 루틴 체크 */}
+          {today && today.items.length > 0 && (
+            <section className="mb-10 bg-white rounded-xl p-6 md:p-8 shadow-[0px_12px_32px_rgba(31,41,55,0.04)]">
+              <div className="flex items-end justify-between mb-5">
+                <div>
+                  <h3 className="text-lg font-bold text-[#1F2937] mb-1">오늘의 루틴</h3>
+                  <p className="text-sm text-[#6B7280]">
+                    {today.progress.completed}/{today.progress.total} 완료
+                    {today.progress.total > 0 && (
+                      <span className="ml-2 text-[#1F76EB] font-semibold">
+                        {Math.round((today.progress.completed / today.progress.total) * 100)}%
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* 진행률 바 */}
+              <div className="h-1.5 w-full bg-[#EEF1F5] rounded-full overflow-hidden mb-6">
+                <div
+                  className="h-full bg-[#1F76EB] rounded-full transition-all duration-500"
+                  style={{ width: today.progress.total > 0 ? `${(today.progress.completed / today.progress.total) * 100}%` : "0%" }}
+                />
+              </div>
+
+              <ul className="space-y-2">
+                {today.items.map(({ routine, completed }) => (
+                  <li key={routine.id}>
+                    <button
+                      onClick={() => toggleTodayCompletion(routine.id, completed)}
+                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left transition-colors ${
+                        completed ? "bg-[#E8F0FC]" : "bg-[#EEF1F5] hover:bg-[#E4E9F0]"
+                      }`}
+                    >
+                      <span
+                        className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors flex-shrink-0 ${
+                          completed ? "bg-[#1F76EB] text-white" : "bg-white border border-[#E4E9F0]"
+                        }`}
+                      >
+                        {completed && (
+                          <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
+                        )}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-semibold ${completed ? "text-[#1F76EB] line-through" : "text-[#1F2937]"}`}>
+                          {routine.title}
+                        </p>
+                        <p className="text-xs text-[#6B7280] mt-0.5">{routine.duration}분 · {routine.time}</p>
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {!loading && routines.length === 0 && (
             <div className="bg-[#EEF1F5] rounded-xl p-8 text-center text-[#6B7280]">

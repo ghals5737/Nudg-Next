@@ -182,6 +182,16 @@ export interface RoutineRhythmResponse {
   successRate: number
 }
 
+export interface TodayRoutineItem {
+  routine: Routine
+  completed: boolean
+}
+
+export interface TodayRoutinesResponse {
+  items: TodayRoutineItem[]
+  progress: { completed: number; total: number }
+}
+
 // Schedule
 export interface CreateScheduleBlockRequest {
   title: string

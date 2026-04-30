@@ -52,60 +52,105 @@ class ApiClient {
 
   private async tryRefresh(): Promise<boolean> {
     const rt = this.refreshToken
-    if (!rt) return false
+    if (!rt) {
+      console.warn("[auth] refresh skipped: no refreshToken cookie")
+      return false
+    }
     try {
+      console.info("[auth] attempting token refresh…")
       const res = await fetch(`${this.baseUrl}/auth/refresh`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken: rt }),
       })
-      if (!res.ok) return false
+      const ct = res.headers.get("content-type") ?? ""
+      const isJson = ct.includes("application/json")
+      if (!res.ok) {
+        let detail = ""
+        if (isJson) {
+          const body = await res.json().catch(() => null)
+          detail = body?.error ? ` (${body.error})` : ""
+        }
+        console.warn(`[auth] refresh failed: ${res.status}${detail}`)
+        return false
+      }
+      if (!isJson) {
+        console.warn(`[auth] refresh response not JSON (content-type: ${ct || "none"})`)
+        return false
+      }
       const data = await res.json()
+      if (!data?.accessToken) {
+        console.warn("[auth] refresh response missing accessToken", data)
+        return false
+      }
       this.setToken(data.accessToken)
       if (data.refreshToken) this.setRefreshToken(data.refreshToken)
+      console.info("[auth] refresh succeeded")
       return true
-    } catch {
+    } catch (err) {
+      console.warn("[auth] refresh threw:", err)
       return false
     }
   }
 
-  private async request<T>(path: string, init?: RequestInit): Promise<T> {
+  private async ensureRefreshed(): Promise<boolean> {
+    if (!this.refreshing) {
+      this.refreshing = this.tryRefresh().then((ok) => {
+        this.refreshing = null
+        if (!ok) {
+          this.clearToken()
+          this.clearRefreshToken()
+          if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+            console.warn("[auth] redirecting to /login (refresh failed)")
+            window.location.href = "/login"
+          }
+        }
+      })
+    }
+    await this.refreshing
+    return !!this.accessToken
+  }
+
+  private async request<T>(path: string, init?: RequestInit, retried = false): Promise<T> {
+    // accessToken이 없는데 refreshToken은 있으면 사전 refresh
+    if (!this.accessToken && this.refreshToken && !retried) {
+      const ok = await this.ensureRefreshed()
+      if (!ok) throw new Error("Unauthorized")
+    }
+
     const makeHeaders = (): HeadersInit => ({
       "Content-Type": "application/json",
       ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
       ...init?.headers,
     })
 
-    let res = await fetch(`${this.baseUrl}${path}`, { ...init, headers: makeHeaders() })
+    const res = await fetch(`${this.baseUrl}${path}`, { ...init, headers: makeHeaders() })
+    const contentType = res.headers.get("content-type") ?? ""
+    const isJson = contentType.includes("application/json")
+    const isHtml = contentType.includes("text/html")
 
-    if (res.status === 401) {
-      // serialize concurrent refresh attempts
-      if (!this.refreshing) {
-        this.refreshing = this.tryRefresh().then((ok) => {
-          this.refreshing = null
-          if (!ok) {
-            this.clearToken()
-            this.clearRefreshToken()
-            window.location.href = "/login"
-          }
-        })
-      }
-      await this.refreshing
-      if (!this.accessToken) throw new Error("Unauthorized")
-      // retry with new token
-      res = await fetch(`${this.baseUrl}${path}`, { ...init, headers: makeHeaders() })
+    // 401, 또는 (응답 실패 && HTML — 로그인 리다이렉트 추정) → refresh 후 1회 재시도
+    // 성공(2xx) + 비-JSON(204 No Content, 빈 body 등)은 정상 응답으로 처리해야 함
+    if ((res.status === 401 || (!res.ok && isHtml)) && !retried) {
+      const ok = await this.ensureRefreshed()
+      if (!ok) throw new Error("Unauthorized")
+      return this.request<T>(path, init, true)
     }
 
     if (!res.ok) {
-      const err: ApiError = await res.json().catch(() => ({
-        error: "Unknown error",
-        statusCode: res.status,
-      }))
-      throw new Error(err.error ?? `Request failed: ${res.status}`)
+      let errMsg = `Request failed: ${res.status}`
+      if (isJson) {
+        const err: ApiError = await res.json().catch(() => ({ error: errMsg, statusCode: res.status }))
+        errMsg = err.error ?? errMsg
+      }
+      throw new Error(errMsg)
     }
 
-    const contentType = res.headers.get("content-type")
-    if (!contentType || res.status === 204) return null as T
+    if (res.status === 204) return null as T
+    if (!isJson) {
+      // 성공이지만 JSON이 아닐 때 (빈 body 등) — null 반환
+      return null as T
+    }
     return res.json()
   }
 

@@ -7,6 +7,8 @@ import { NewScheduleDialog } from "@/components/new-schedule-dialog"
 import { EditScheduleDialog } from "@/components/edit-schedule-dialog"
 import { scheduleApi } from "@/lib/api/schedule"
 import type { ScheduleBlock } from "@/types/api"
+import { useBlockAlarms } from "@/hooks/use-block-alarms"
+import { getPermission, requestPermission, type PermissionState } from "@/lib/notifications"
 
 const toDateStr = (date: Date) => {
   const y = date.getFullYear()
@@ -46,7 +48,16 @@ export default function PlannerPage() {
 
   // 타이머
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null)
-  const [elapsed, setElapsed] = useState(0) // seconds
+  const [isRunning, setIsRunning] = useState(false)
+  const [elapsed, setElapsed] = useState(0) // seconds (누적, 일시정지 시 유지)
+
+  // 알림 권한
+  const [notifPermission, setNotifPermission] = useState<PermissionState>("default")
+  useEffect(() => { setNotifPermission(getPermission()) }, [])
+  const handleEnableNotifications = async () => {
+    const result = await requestPermission()
+    setNotifPermission(result)
+  }
   const startedAtRef = useRef<number | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -60,38 +71,56 @@ export default function PlannerPage() {
 
   useEffect(() => { fetchBlocks(currentDate) }, [currentDate])
 
-  // 타이머 인터벌
+  // 타이머 인터벌 — isRunning에 따라 시작/정지, elapsed는 유지
   useEffect(() => {
-    if (activeBlockId) {
-      startedAtRef.current = Date.now()
+    if (isRunning) {
+      startedAtRef.current = Date.now() - elapsed * 1000
       timerRef.current = setInterval(() => {
         setElapsed(Math.floor((Date.now() - startedAtRef.current!) / 1000))
       }, 1000)
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current)
-      setElapsed(0)
+    } else if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [activeBlockId])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning])
 
   const handleStart = (block: ScheduleBlock) => {
+    // 다른 블록으로 전환 시에만 누적 시간 초기화
+    if (activeBlockId !== block.id) {
+      setElapsed(0)
+    }
     setActiveBlockId(block.id)
+    setIsRunning(true)
   }
 
   const handleComplete = async () => {
     if (!activeBlockId) return
-    const actualDurationHours = elapsed / 3600
-    const plannedDuration = activeBlock?.duration ?? 0
-    await scheduleApi.update(activeBlockId, {
-      status: "completed",
-      duration: elapsed > 60 ? actualDurationHours : plannedDuration,
-    })
-    setActiveBlockId(null)
-    fetchBlocks(currentDate)
+    try {
+      await scheduleApi.complete(activeBlockId)
+      setActiveBlockId(null)
+      setIsRunning(false)
+      setElapsed(0)
+      fetchBlocks(currentDate)
+    } catch (err) {
+      console.error("완료 처리 실패:", err)
+      alert(`완료 처리에 실패했어요: ${err instanceof Error ? err.message : "알 수 없는 오류"}`)
+    }
   }
 
   const handlePause = () => {
+    setIsRunning(false)
+  }
+
+  const handleResume = () => {
+    setIsRunning(true)
+  }
+
+  const handleStop = () => {
     setActiveBlockId(null)
+    setIsRunning(false)
+    setElapsed(0)
   }
 
   const handleSnooze = async (id: string) => {
@@ -123,6 +152,9 @@ export default function PlannerPage() {
 
   const sortedBlocks = [...blocks].sort((a, b) => a.startTime - b.startTime)
 
+  // 오늘 일정 블록에 대한 시작/종료 5분 전/종료 알림 자동 스케줄링
+  useBlockAlarms(sortedBlocks, isToday())
+
   const activeBlock = blocks.find((b) => b.id === activeBlockId) ?? null
 
   // 진행률 (예상 시간 대비)
@@ -144,20 +176,39 @@ export default function PlannerPage() {
           />
           <div className="flex items-center justify-between px-6 py-3 md:pl-80">
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-xl animate-pulse">timer</span>
+              <span className={`material-symbols-outlined text-xl ${isRunning ? "animate-pulse" : ""}`}>timer</span>
               <div>
                 <span className="font-semibold">{activeBlock.title}</span>
-                <span className="ml-3 text-[#ffffff]/70 text-sm">예상 {toDurationStr(activeBlock.duration)}</span>
+                <span className="ml-3 text-[#ffffff]/70 text-sm">
+                  {isRunning ? `예상 ${toDurationStr(activeBlock.duration)}` : "일시정지됨"}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <span className="font-mono text-xl font-bold tabular-nums">{toElapsedStr(elapsed)}</span>
-              <button
-                onClick={handlePause}
-                className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-sm font-medium transition-colors"
-              >
-                일시정지
-              </button>
+              {isRunning ? (
+                <button
+                  onClick={handlePause}
+                  className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-sm font-medium transition-colors"
+                >
+                  일시정지
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={handleResume}
+                    className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-sm font-medium transition-colors"
+                  >
+                    재개
+                  </button>
+                  <button
+                    onClick={handleStop}
+                    className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors"
+                  >
+                    중단
+                  </button>
+                </>
+              )}
               <button
                 onClick={handleComplete}
                 className="px-3 py-1.5 rounded-full bg-white/30 hover:bg-white/40 text-sm font-bold transition-colors"
@@ -193,13 +244,36 @@ export default function PlannerPage() {
                 )}
               </div>
             </div>
-            <button
-              onClick={() => setShowNewScheduleDialog(true)}
-              className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-full bg-[#E8F0FC] text-[#1F2937] font-semibold hover:bg-[#E4E9F0] transition-colors duration-300"
-            >
-              <span className="material-symbols-outlined">add</span>
-              새 블록
-            </button>
+            <div className="flex items-center gap-3">
+              {isToday() && notifPermission === "default" && (
+                <button
+                  onClick={handleEnableNotifications}
+                  className="hidden sm:flex items-center gap-2 px-5 py-3 rounded-full bg-white text-[#1F76EB] font-semibold hover:bg-[#E8F0FC] transition-colors duration-300 shadow-[0px_4px_12px_rgba(31,41,55,0.04)]"
+                >
+                  <span className="material-symbols-outlined">notifications_active</span>
+                  알람 켜기
+                </button>
+              )}
+              {isToday() && notifPermission === "granted" && (
+                <span className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#E8F0FC] text-[#1F76EB] text-sm font-medium">
+                  <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>notifications_active</span>
+                  알람 켜짐
+                </span>
+              )}
+              {isToday() && notifPermission === "denied" && (
+                <span className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#EEF1F5] text-[#6B7280] text-sm font-medium" title="브라우저 설정에서 알림을 허용해주세요">
+                  <span className="material-symbols-outlined text-base">notifications_off</span>
+                  알람 차단됨
+                </span>
+              )}
+              <button
+                onClick={() => setShowNewScheduleDialog(true)}
+                className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-full bg-[#E8F0FC] text-[#1F2937] font-semibold hover:bg-[#E4E9F0] transition-colors duration-300"
+              >
+                <span className="material-symbols-outlined">add</span>
+                새 블록
+              </button>
+            </div>
           </div>
 
           {loading ? (
