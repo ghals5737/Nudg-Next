@@ -40,7 +40,8 @@ export function EditScheduleDialog({ open, onOpenChange, block, onSuccess }: Edi
   const [startTime, setStartTime] = useState("09:00")
   const [timePickerOpen, setTimePickerOpen] = useState(false)
   const [durationMin, setDurationMin] = useState(30)
-  const [customDuration, setCustomDuration] = useState(30)
+  const [customHours, setCustomHours] = useState(0)
+  const [customMinutes, setCustomMinutes] = useState(30)
   const [selectedTag, setSelectedTag] = useState<string>("업무")
   const [location, setLocation] = useState("")
   const [submitting, setSubmitting] = useState(false)
@@ -55,17 +56,21 @@ export function EditScheduleDialog({ open, onOpenChange, block, onSuccess }: Edi
     const preset = durations.find((d) => d.value === minVal && d.value !== 0)
     if (preset) {
       setDurationMin(preset.value)
-      setCustomDuration(minVal)
+      setCustomHours(Math.floor(minVal / 60))
+      setCustomMinutes(minVal % 60)
     } else {
       setDurationMin(0)
-      setCustomDuration(minVal > 0 ? minVal : 30)
+      const safe = minVal > 0 ? minVal : 30
+      setCustomHours(Math.floor(safe / 60))
+      setCustomMinutes(safe % 60)
     }
     setSelectedTag(block.tag ?? "업무")
     setLocation(block.location ?? "")
     setError(null)
   }, [open, block?.id])
 
-  const effectiveDuration = durationMin === 0 ? customDuration : durationMin
+  const customTotalMin = customHours * 60 + customMinutes
+  const effectiveDuration = durationMin === 0 ? customTotalMin : durationMin
 
   const handleClose = () => {
     onOpenChange(false)
@@ -74,6 +79,10 @@ export function EditScheduleDialog({ open, onOpenChange, block, onSuccess }: Edi
 
   const handleSubmit = async () => {
     if (!block || !title.trim()) return
+    if (effectiveDuration <= 0) {
+      setError("소요 시간을 1분 이상으로 설정해주세요.")
+      return
+    }
     setSubmitting(true)
     setError(null)
     try {
@@ -174,16 +183,30 @@ export function EditScheduleDialog({ open, onOpenChange, block, onSuccess }: Edi
               ))}
             </div>
             {durationMin === 0 && (
-              <div className="flex items-center gap-3">
-                <input
-                  type="number"
-                  min={5}
-                  max={480}
-                  className="w-32 bg-[#EEF1F5] rounded-xl px-4 py-3 text-lg text-[#1F2937] outline-none focus:ring-2 focus:ring-[#1F76EB]/20 border-none"
-                  value={customDuration}
-                  onChange={(e) => setCustomDuration(Number(e.target.value))}
-                />
-                <span className="text-[#6B7280]">분</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={0}
+                    max={23}
+                    className="w-24 bg-[#EEF1F5] rounded-xl px-4 py-3 text-lg text-[#1F2937] outline-none focus:ring-2 focus:ring-[#1F76EB]/20 border-none text-center"
+                    value={customHours}
+                    onChange={(e) => setCustomHours(Math.max(0, Math.min(23, Number(e.target.value) || 0)))}
+                  />
+                  <span className="text-[#6B7280]">시간</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    className="w-24 bg-[#EEF1F5] rounded-xl px-4 py-3 text-lg text-[#1F2937] outline-none focus:ring-2 focus:ring-[#1F76EB]/20 border-none text-center"
+                    value={customMinutes}
+                    onChange={(e) => setCustomMinutes(Math.max(0, Math.min(59, Number(e.target.value) || 0)))}
+                  />
+                  <span className="text-[#6B7280]">분</span>
+                </div>
+                <span className="text-sm text-[#6B7280] ml-1">총 {customTotalMin}분</span>
               </div>
             )}
           </section>
