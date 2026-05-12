@@ -1,0 +1,40 @@
+name: Build and Deploy on Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker registry
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login https://registry.booknote.site -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
+
+      - name: Build & push Docker image
+        # NEXT_PUBLIC_* 은 빌드 시점에 굳혀야 하므로 build-arg 로 전달.
+        # 서버 전용 env(API_URL 등)는 런타임에 컨테이너 env 로 주입됨.
+        run: |
+          docker buildx build . \
+            --build-arg NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}" \
+            -t registry.booknote.site/nudg-front:latest \
+            -t registry.booknote.site/nudg-front:${{ github.ref_name }} \
+            --push
+
+      - name: Send POST request to webhook
+        run: |
+          curl -X POST https://webhook.booknote.site \
+            -H "Content-Type: application/json" \
+            -d '{"status": "success", "message": "Deployment completed for tag ${{ github.ref_name }}", "authKey": "${{ secrets.WEBHOOK_AUTH_KEY }}", "serviceName": "NudgFront"}'
+
+      - name: Logout from Docker registry
+        if: always()
+        run: docker logout registry.booknote.site

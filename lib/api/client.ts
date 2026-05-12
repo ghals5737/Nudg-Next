@@ -1,6 +1,6 @@
 import type { ApiError } from "@/types/api"
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api"
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api"
 
 function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null
