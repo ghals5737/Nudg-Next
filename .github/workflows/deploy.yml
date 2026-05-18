@@ -20,11 +20,10 @@ jobs:
         run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login https://registry.booknote.site -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
 
       - name: Build & push Docker image
-        # NEXT_PUBLIC_* 은 빌드 시점에 굳혀야 하므로 build-arg 로 전달.
-        # 서버 전용 env(API_URL 등)는 런타임에 컨테이너 env 로 주입됨.
+        # 클라이언트는 상대경로 /api 고정 — NEXT_PUBLIC_API_URL build-arg 불필요.
+        # 서버 전용 env(API_URL 등) 는 런타임에 컨테이너 env 로 주입.
         run: |
           docker buildx build . \
-            --build-arg NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}" \
             -t registry.booknote.site/nudg-front:latest \
             -t registry.booknote.site/nudg-front:${{ github.ref_name }} \
             --push

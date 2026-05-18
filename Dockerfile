@@ -12,10 +12,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js 빌드는 NEXT_PUBLIC_* 값을 굳혀버리므로 빌드 시점에 주입.
-# 서버 전용 env(API_URL 등)는 런타임에 주입되도록 ENV 로 굳히지 않음.
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+# 클라이언트는 코드 안에서 상대경로 /api 로 호출하도록 고정 — NEXT_PUBLIC_API_URL build-arg 불필요.
+# 서버 전용 env(API_URL 등) 는 런타임에 컨테이너 env 로 주입.
 
 RUN npm run build
 

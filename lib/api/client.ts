@@ -1,6 +1,9 @@
 import type { ApiError } from "@/types/api"
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api"
+// 클라이언트는 항상 상대경로 /api 로 자기 origin 호출 → Mixed Content 원천 차단.
+// Next.js rewrite 가 서버 사이드에서 API_URL(런타임 env) 로 프록시.
+// 절대 URL 을 빌드에 박지 말 것 — http/https 불일치 시 브라우저가 요청 자체를 차단함.
+const BASE_URL = "/api"
 
 function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null
