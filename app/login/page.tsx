@@ -29,9 +29,18 @@ function LoginPageInner() {
   useEffect(() => {
     const token = searchParams.get("token")
     const refresh = searchParams.get("refreshToken")
+    console.log("[login] OAuth callback check:", {
+      url: typeof window !== "undefined" ? window.location.href : "(ssr)",
+      hasToken: !!token,
+      tokenPreview: token ? `${token.slice(0, 20)}…` : null,
+      hasRefresh: !!refresh,
+      refreshPreview: refresh ? `${refresh.slice(0, 20)}…` : null,
+    })
     if (token) {
       apiClient.setToken(token)
       if (refresh) apiClient.setRefreshToken(refresh)
+      console.log("[login] cookies after setToken/setRefreshToken:", document.cookie)
+      console.log("[login] navigating to /")
       router.replace("/")
     }
   }, [searchParams, router])
